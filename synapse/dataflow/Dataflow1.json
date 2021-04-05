@@ -1,0 +1,55 @@
+{
+	"name": "Dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "raw_store_csv",
+						"type": "DatasetReference"
+					},
+					"name": "rawCustomer"
+				},
+				{
+					"dataset": {
+						"referenceName": "raw_transactionheader_csv",
+						"type": "DatasetReference"
+					},
+					"name": "rawHeader"
+				},
+				{
+					"dataset": {
+						"referenceName": "raw_transactiondetail_csv",
+						"type": "DatasetReference"
+					},
+					"name": "rawDetail"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Join1"
+				},
+				{
+					"name": "Join2"
+				},
+				{
+					"name": "Aggregate1"
+				},
+				{
+					"name": "DerivedColumn1"
+				}
+			],
+			"script": "source(output(\n\t\tStoreCode as string,\n\t\tName as string,\n\t\tAddress as string,\n\t\tCity as string,\n\t\tState as string,\n\t\tPostalCode as string,\n\t\tCountry as string,\n\t\tArea as string,\n\t\tNumberofEmployees as string,\n\t\tStoreRetailID as string,\n\t\tPhoneNumber as string,\n\t\tWebsite as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> rawCustomer\nsource(output(\n\t\tTransactionHeaderID as string,\n\t\tStoreRetailID as string,\n\t\tCustomerRetailID as string,\n\t\tTitle as string,\n\t\tDescription as string,\n\t\tDate as timestamp,\n\t\tTransactionType as double,\n\t\tTransactionTotal as double,\n\t\tPaymentMethod as string,\n\t\tCurrency as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> rawHeader\nsource(output(\n\t\tCustomerRetailID as string,\n\t\tTransactionHeaderID as string,\n\t\tProductRetailID as string,\n\t\tQuantity as integer,\n\t\tListPrice as double,\n\t\tDiscountAmount as double,\n\t\tTax as double,\n\t\tShippingCost as double,\n\t\tTotalAmount as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> rawDetail\nrawCustomer, rawHeader join(rawCustomer@StoreRetailID == rawHeader@StoreRetailID,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join1\nJoin1, rawDetail join(rawHeader@TransactionHeaderID == rawDetail@TransactionHeaderID,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join2\nDerivedColumn1 aggregate(groupBy(rawCustomer@StoreRetailID,\n\t\tYear,\n\t\tMonth),\n\tTransactionTotal = sum(TransactionTotal),\n\t\tShippingTotal = sum(ShippingCost),\n\t\tStoreName = first(Name),\n\t\tStoreCity = first(City),\n\t\tStoreState = first(State),\n\t\tStoreCountry = first(Country),\n\t\tStorePostalCode = first(PostalCode)) ~> Aggregate1\nJoin2 derive(Year = year(Date),\n\t\tMonth = month(Date)) ~> DerivedColumn1\nAggregate1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delimited',\n\tfileSystem: 'datalake',\n\tfolderPath: 'andyrob/processed/',\n\tcolumnDelimiter: ',',\n\tescapeChar: '\\\\',\n\tqutoChar: '\\\"',\n\tcolumnNamesAsHeader: true,\n\tpartitionFileNames:['StoreSalesByMonth.csv'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+		}
+	}
+}
