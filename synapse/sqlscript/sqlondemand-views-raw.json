@@ -1,14 +1,14 @@
 {
-	"name": "SQL script 2",
+	"name": "sqlondemand-views-raw",
 	"properties": {
 		"content": {
-			"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailTransactionDetails.csv',\n        FORMAT = 'CSV',\n        PARSER_VERSION='2.0'\n    ) AS [result]\n",
+			"query": "\ncreate database SourceViewsDb\n\nuse SourceViewsDb\n\ncreate view vTransactionDetails \nas\nselect * \n  from \n    openrowset(\n        bulk  'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailTransactionDetails.csv'\n        , format = 'CSV'\n        , parser_version ='2.0'\n        , header_row = true\n    ) txndetails\nGO\n\ncreate view vTransactionHeader\nas\nselect * \n  from \n    openrowset(\n        bulk  'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailTransactionHeader.csv'\n        , format = 'CSV'\n        , parser_version ='2.0'\n        , header_row = true\n    ) txnheader\ngo\n\ncreate view vCustomer\nas\nselect * \n  from \n    openrowset(\n        bulk  'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailTransactionHeader.csv'\n        , format = 'CSV'\n        , parser_version ='2.0'\n        , header_row = true\n    ) txnheader\ngo\n\n\n\n\nselect top 10 * from vTransactionDetails\nselect top 10 * from vTransactionHeader\n\n",
 			"metadata": {
 				"language": "sql"
 			},
 			"currentConnection": {
 				"poolName": "Built-in",
-				"databaseName": "master"
+				"databaseName": "SourceViewsDb"
 			},
 			"resultLimit": 5000
 		},
