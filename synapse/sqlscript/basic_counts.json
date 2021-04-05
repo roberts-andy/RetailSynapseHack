@@ -1,6 +1,9 @@
 {
 	"name": "basic_counts",
 	"properties": {
+		"folder": {
+			"name": "andy/ad-hoc"
+		},
 		"content": {
 			"query": "select top 100 *\nfrom\n    openrowset(\n        bulk 'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailCustomer.csv'\n        , format = 'CSV'\n        , parser_version ='2.0'\n        , header_row = true\n    ) as customers\n\nselect state\n        , city\n        , customercount = count(*) \nfrom\n    openrowset(\n        bulk 'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailCustomer.csv'\n        , format = 'CSV'\n        , parser_version ='2.0'\n        , header_row = true\n    ) as customers\ngroup by state, city\norder by customercount DESC\n\n\nselect top 100 *\n  from\n    openrowset(\n        bulk  'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailTransactionDetails.csv'\n        , format = 'CSV'\n        , parser_version ='2.0'\n        , header_row = true\n    ) as orderdetails\n\n\nselect count(*)\n  from \n      openrowset(\n        bulk  'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailTransactionDetails.csv'\n        , format = 'CSV'\n        , parser_version ='2.0'\n        , header_row = true\n    ) as orderdetails\n\n\n",
 			"metadata": {

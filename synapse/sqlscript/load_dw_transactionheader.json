@@ -1,0 +1,20 @@
+{
+	"name": "load_dw_transactionheader",
+	"properties": {
+		"folder": {
+			"name": "andy/load_dw_from_raw"
+		},
+		"content": {
+			"query": "IF NOT EXISTS (SELECT * FROM sys.objects O JOIN sys.schemas S ON O.schema_id = S.schema_id WHERE O.NAME = 'TransactionHeader' AND O.TYPE = 'U' AND S.NAME = 'andy')\nCREATE TABLE andy.TransactionHeader\n\t(\n\t [TransactionHeaderID] uniqueidentifier,\n\t [StoreRetailID] uniqueidentifier,\n\t [CustomerRetailID] uniqueidentifier,\n\t [Title] nvarchar(4000),\n\t [Description] nvarchar(4000),\n\t [Date] datetime2(0),\n\t [TransactionType] nvarchar(4000),\n\t [TransactionTotal] float,\n\t [PaymentMethod] nvarchar(4000),\n\t [Currency] nvarchar(4000)\n\t)\nWITH\n\t(\n\tDISTRIBUTION = HASH(TransactionHeaderID),\n\t CLUSTERED COLUMNSTORE INDEX\n\t -- HEAP\n\t)\nGO\n\n--Uncomment the 4 lines below to create a stored procedure for data pipeline orchestration​\n--CREATE PROC bulk_load_TransactionHeader\n--AS\n--BEGIN\nCOPY INTO andy.TransactionHeader\n(TransactionHeaderID 1, StoreRetailID 2, CustomerRetailID 3, Title 4, Description 5, Date 6, TransactionType 7, TransactionTotal 8, PaymentMethod 9, Currency 10)\nFROM 'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailTransactionHeader.csv'\nWITH\n(\n\tFILE_TYPE = 'CSV'\n\t,MAXERRORS = 0\n\t,FIRSTROW = 2\n\t,ERRORFILE = 'https://andyrobretailstor.dfs.core.windows.net/datalake/'\n\t,IDENTITY_INSERT = 'OFF'\n)\n--END\nGO\n\nSELECT TOP 100 * FROM andy.TransactionHeader\nGO\n\nDBCC PDW_SHOWSPACEUSED('andy.TransactionHeader');\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"poolName": "andyrobretaildw",
+				"databaseName": "andyrobretaildw"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

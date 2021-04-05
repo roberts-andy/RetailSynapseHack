@@ -1,0 +1,73 @@
+{
+	"name": "raw_store_csv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "RetailStores.csv",
+				"folderPath": "andyrob/raw",
+				"fileSystem": "datalake"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "StoreCode",
+				"type": "String"
+			},
+			{
+				"name": "Name",
+				"type": "String"
+			},
+			{
+				"name": "Address",
+				"type": "String"
+			},
+			{
+				"name": "City",
+				"type": "String"
+			},
+			{
+				"name": "State",
+				"type": "String"
+			},
+			{
+				"name": "PostalCode",
+				"type": "String"
+			},
+			{
+				"name": "Country",
+				"type": "String"
+			},
+			{
+				"name": "Area",
+				"type": "String"
+			},
+			{
+				"name": "NumberofEmployees",
+				"type": "String"
+			},
+			{
+				"name": "StoreRetailID",
+				"type": "String"
+			},
+			{
+				"name": "PhoneNumber",
+				"type": "String"
+			},
+			{
+				"name": "Website",
+				"type": "String"
+			}
+		]
+	}
+}

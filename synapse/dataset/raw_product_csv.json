@@ -1,0 +1,41 @@
+{
+	"name": "raw_product_csv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "RetailProducts.csv",
+				"folderPath": "andyrob/raw",
+				"fileSystem": "datalake"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\"",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Name",
+				"type": "String"
+			},
+			{
+				"name": "Cost",
+				"type": "String"
+			},
+			{
+				"name": "ListPrice",
+				"type": "String"
+			},
+			{
+				"name": "RetailProductID",
+				"type": "String"
+			}
+		]
+	}
+}

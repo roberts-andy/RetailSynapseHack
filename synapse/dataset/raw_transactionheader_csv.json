@@ -1,0 +1,65 @@
+{
+	"name": "raw_transactionheader_csv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "RetailTransactionHeader.csv",
+				"folderPath": "andyrob/raw",
+				"fileSystem": "datalake"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "TransactionHeaderID",
+				"type": "String"
+			},
+			{
+				"name": "StoreRetailID",
+				"type": "String"
+			},
+			{
+				"name": "CustomerRetailID",
+				"type": "String"
+			},
+			{
+				"name": "Title",
+				"type": "String"
+			},
+			{
+				"name": "Description",
+				"type": "String"
+			},
+			{
+				"name": "Date",
+				"type": "String"
+			},
+			{
+				"name": "TransactionType",
+				"type": "String"
+			},
+			{
+				"name": "TransactionTotal",
+				"type": "String"
+			},
+			{
+				"name": "PaymentMethod",
+				"type": "String"
+			},
+			{
+				"name": "Currency",
+				"type": "String"
+			}
+		]
+	}
+}

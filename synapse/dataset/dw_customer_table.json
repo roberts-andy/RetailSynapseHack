@@ -1,0 +1,61 @@
+{
+	"name": "dw_customer_table",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "andyrob_dw",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Address",
+				"type": "nvarchar"
+			},
+			{
+				"name": "City",
+				"type": "nvarchar"
+			},
+			{
+				"name": "State",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PostalCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Country",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PreferredStore",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RewardsPoints",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CustomerRetailID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "img",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EmailId",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "andy2",
+			"table": "Customer"
+		}
+	}
+}
