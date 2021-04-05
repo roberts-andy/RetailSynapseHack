@@ -27,7 +27,7 @@ In the synapse workspace you should find a linked storage account. This is your 
 
 Great! Now find a couch and walk them through how your met the challenge objective, we'll see you on the next challenge.
 
-## Resources
+## Resources and Links
 
 Some Links that may be helpful to you: 
 * Link1
