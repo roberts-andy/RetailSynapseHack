@@ -1,0 +1,16 @@
+{
+	"name": "dw_transactiondetail_table",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "andyrob_dw",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "andy2",
+			"table": "TransactionDetail"
+		}
+	}
+}

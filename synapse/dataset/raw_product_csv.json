@@ -1,5 +1,5 @@
 {
-	"name": "raw_customer_csv",
+	"name": "raw_product_csv",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "RetailCustomer.csv",
+				"fileName": "RetailProducts.csv",
 				"folderPath": "andyrob/raw",
 				"fileSystem": "datalake"
 			},
@@ -25,43 +25,15 @@
 				"type": "String"
 			},
 			{
-				"name": "Address",
+				"name": "Cost",
 				"type": "String"
 			},
 			{
-				"name": "City",
+				"name": "ListPrice",
 				"type": "String"
 			},
 			{
-				"name": "State",
-				"type": "String"
-			},
-			{
-				"name": "PostalCode",
-				"type": "String"
-			},
-			{
-				"name": "Country",
-				"type": "String"
-			},
-			{
-				"name": "PreferredStore",
-				"type": "String"
-			},
-			{
-				"name": "RewardsPoints",
-				"type": "String"
-			},
-			{
-				"name": "CustomerRetailID",
-				"type": "String"
-			},
-			{
-				"name": "img",
-				"type": "String"
-			},
-			{
-				"name": "EmailId",
+				"name": "RetailProductID",
 				"type": "String"
 			}
 		]

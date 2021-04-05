@@ -1,5 +1,5 @@
 {
-	"name": "raw_customer_csv",
+	"name": "raw_transactionheader_csv",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "RetailCustomer.csv",
+				"fileName": "RetailTransactionHeader.csv",
 				"folderPath": "andyrob/raw",
 				"fileSystem": "datalake"
 			},
@@ -21,35 +21,11 @@
 		},
 		"schema": [
 			{
-				"name": "Name",
+				"name": "TransactionHeaderID",
 				"type": "String"
 			},
 			{
-				"name": "Address",
-				"type": "String"
-			},
-			{
-				"name": "City",
-				"type": "String"
-			},
-			{
-				"name": "State",
-				"type": "String"
-			},
-			{
-				"name": "PostalCode",
-				"type": "String"
-			},
-			{
-				"name": "Country",
-				"type": "String"
-			},
-			{
-				"name": "PreferredStore",
-				"type": "String"
-			},
-			{
-				"name": "RewardsPoints",
+				"name": "StoreRetailID",
 				"type": "String"
 			},
 			{
@@ -57,11 +33,31 @@
 				"type": "String"
 			},
 			{
-				"name": "img",
+				"name": "Title",
 				"type": "String"
 			},
 			{
-				"name": "EmailId",
+				"name": "Description",
+				"type": "String"
+			},
+			{
+				"name": "Date",
+				"type": "String"
+			},
+			{
+				"name": "TransactionType",
+				"type": "String"
+			},
+			{
+				"name": "TransactionTotal",
+				"type": "String"
+			},
+			{
+				"name": "PaymentMethod",
+				"type": "String"
+			},
+			{
+				"name": "Currency",
 				"type": "String"
 			}
 		]

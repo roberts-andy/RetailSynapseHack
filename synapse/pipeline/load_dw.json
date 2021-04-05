@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy_f8h",
+				"name": "load_customer",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -172,13 +172,641 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "SourceDataset_f8h",
+						"referenceName": "raw_customer_csv",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "DestinationDataset_f8h",
+						"referenceName": "dw_customer_table",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "load_product",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "datalake/andyrob/raw/RetailCustomer.csv"
+					},
+					{
+						"name": "Destination",
+						"value": "andy2.Customer"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlDWSink",
+						"allowPolyBase": true,
+						"polyBaseSettings": {
+							"rejectValue": 0,
+							"rejectType": "value",
+							"useTypeDefault": true
+						},
+						"tableOption": "autoCreate"
+					},
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+							"type": "LinkedServiceReference"
+						},
+						"path": "datalake/andyrob/polybasestage"
+					},
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Name",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Name"
+								}
+							},
+							{
+								"source": {
+									"name": "Cost",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "Cost"
+								}
+							},
+							{
+								"source": {
+									"name": "ListPrice",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "ListPrice"
+								}
+							},
+							{
+								"source": {
+									"name": "RetailProductID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "RetailProductID"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "raw_product_csv",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "dw_product_table",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "load_store",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "datalake/andyrob/raw/RetailCustomer.csv"
+					},
+					{
+						"name": "Destination",
+						"value": "andy2.Customer"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": false,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings",
+							"skipLineCount": 0
+						}
+					},
+					"sink": {
+						"type": "SqlDWSink",
+						"allowPolyBase": true,
+						"polyBaseSettings": {
+							"rejectValue": 0,
+							"rejectType": "value",
+							"useTypeDefault": true
+						},
+						"tableOption": "autoCreate"
+					},
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+							"type": "LinkedServiceReference"
+						},
+						"path": "datalake/andyrob/polybasestage"
+					},
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "StoreCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "StoreCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Name",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Address",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Address",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "City",
+									"type": "String"
+								},
+								"sink": {
+									"name": "City",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "State",
+									"type": "String"
+								},
+								"sink": {
+									"name": "State",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PostalCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PostalCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Country",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Country",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Area",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Area",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "NumberofEmployees",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "NumberofEmployees",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "StoreRetailID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "StoreRetailID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PhoneNumber",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PhoneNumber",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Website",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Website",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "raw_store_csv",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "dw_store_table",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "load_transactiondetail",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "datalake/andyrob/raw/RetailCustomer.csv"
+					},
+					{
+						"name": "Destination",
+						"value": "andy2.Customer"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlDWSink",
+						"allowPolyBase": true,
+						"polyBaseSettings": {
+							"rejectValue": 0,
+							"rejectType": "value",
+							"useTypeDefault": true
+						},
+						"tableOption": "autoCreate"
+					},
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+							"type": "LinkedServiceReference"
+						},
+						"path": "datalake/andyrob/polybasestage"
+					},
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "CustomerRetailID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CustomerRetailID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TransactionHeaderID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TransactionHeaderID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ProductRetailID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ProductRetailID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Quantity",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "Quantity",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ListPrice",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "ListPrice",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DiscountAmount",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "DiscountAmount",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Tax",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "Tax",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ShippingCost",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "ShippingCost",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TotalAmount",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "TotalAmount",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "raw_transactiondetail_csv",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "dw_transactiondetail_table",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "load_transactionheader",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "datalake/andyrob/raw/RetailCustomer.csv"
+					},
+					{
+						"name": "Destination",
+						"value": "andy2.Customer"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": false,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings",
+							"skipLineCount": 0
+						}
+					},
+					"sink": {
+						"type": "SqlDWSink",
+						"allowPolyBase": true,
+						"polyBaseSettings": {
+							"rejectValue": 0,
+							"rejectType": "value",
+							"useTypeDefault": true
+						},
+						"tableOption": "autoCreate"
+					},
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+							"type": "LinkedServiceReference"
+						},
+						"path": "datalake/andyrob/polybasestage"
+					},
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "TransactionHeaderID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TransactionHeaderID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "StoreRetailID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "StoreRetailID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CustomerRetailID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CustomerRetailID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Title",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Title",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Description",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Description",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Date",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "Date",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TransactionType",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TransactionType",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TransactionTotal",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "TransactionTotal",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PaymentMethod",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PaymentMethod",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Currency",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Currency",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "raw_transactionheader_csv",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "dw_transactionHeader_table",
 						"type": "DatasetReference"
 					}
 				]

@@ -1,0 +1,35 @@
+{
+	"name": "dw_product_table",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "andyrob_dw",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cost",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "ListPrice",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "RetailProductID",
+				"type": "uniqueidentifier"
+			}
+		],
+		"typeProperties": {
+			"schema": "andy2",
+			"table": "Product"
+		}
+	}
+}

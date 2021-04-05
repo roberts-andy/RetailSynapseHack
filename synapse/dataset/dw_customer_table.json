@@ -1,5 +1,5 @@
 {
-	"name": "DestinationDataset_f8h",
+	"name": "dw_customer_table",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "andyrob_dw",
@@ -7,7 +7,52 @@
 		},
 		"annotations": [],
 		"type": "AzureSqlDWTable",
-		"schema": [],
+		"schema": [
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Address",
+				"type": "nvarchar"
+			},
+			{
+				"name": "City",
+				"type": "nvarchar"
+			},
+			{
+				"name": "State",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PostalCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Country",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PreferredStore",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RewardsPoints",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CustomerRetailID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "img",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EmailId",
+				"type": "nvarchar"
+			}
+		],
 		"typeProperties": {
 			"schema": "andy2",
 			"table": "Customer"

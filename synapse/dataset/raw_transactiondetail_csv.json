@@ -1,5 +1,5 @@
 {
-	"name": "raw_customer_csv",
+	"name": "raw_transactiondetail_csv",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "RetailCustomer.csv",
+				"fileName": "RetailTransactionDetails.csv",
 				"folderPath": "andyrob/raw",
 				"fileSystem": "datalake"
 			},
@@ -21,47 +21,39 @@
 		},
 		"schema": [
 			{
-				"name": "Name",
-				"type": "String"
-			},
-			{
-				"name": "Address",
-				"type": "String"
-			},
-			{
-				"name": "City",
-				"type": "String"
-			},
-			{
-				"name": "State",
-				"type": "String"
-			},
-			{
-				"name": "PostalCode",
-				"type": "String"
-			},
-			{
-				"name": "Country",
-				"type": "String"
-			},
-			{
-				"name": "PreferredStore",
-				"type": "String"
-			},
-			{
-				"name": "RewardsPoints",
-				"type": "String"
-			},
-			{
 				"name": "CustomerRetailID",
 				"type": "String"
 			},
 			{
-				"name": "img",
+				"name": "TransactionHeaderID",
 				"type": "String"
 			},
 			{
-				"name": "EmailId",
+				"name": "ProductRetailID",
+				"type": "String"
+			},
+			{
+				"name": "Quantity",
+				"type": "String"
+			},
+			{
+				"name": "ListPrice",
+				"type": "String"
+			},
+			{
+				"name": "DiscountAmount",
+				"type": "String"
+			},
+			{
+				"name": "Tax",
+				"type": "String"
+			},
+			{
+				"name": "ShippingCost",
+				"type": "String"
+			},
+			{
+				"name": "TotalAmount",
 				"type": "String"
 			}
 		]
