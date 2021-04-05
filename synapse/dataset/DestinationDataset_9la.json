@@ -1,0 +1,19 @@
+{
+	"name": "DestinationDataset_9la",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "andyrob/raw",
+				"fileSystem": "datalake"
+			}
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

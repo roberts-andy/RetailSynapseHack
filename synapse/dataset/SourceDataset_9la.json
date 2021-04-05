@@ -1,0 +1,18 @@
+{
+	"name": "SourceDataset_9la",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SourceData_Blob",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "stageddata"
+			}
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}
