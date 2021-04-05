@@ -1,0 +1,20 @@
+{
+	"name": "dw_ddl",
+	"properties": {
+		"folder": {
+			"name": "andy/load_dw_from_raw"
+		},
+		"content": {
+			"query": "DROP TABLE andy.Customer\nDROP TABLE andy.Product\nDROP TABLE andy.stores\nDROP TABLE andy.TransactionDetail\nDROP TABLE andy.TransactionHeader\nDROP SCHEMA andy\nGO\n\nCREATE SCHEMA andy\nGO\n\nCREATE TABLE andy.Customer\n\t(\n\t [Name] nvarchar(4000),\n\t [Address] nvarchar(4000),\n\t [City] nvarchar(4000),\n\t [State] nvarchar(4000),\n\t [PostalCode] bigint,\n\t [Country] nvarchar(4000),\n\t [PreferredStore] nvarchar(4000),\n\t [RewardsPoints] bigint,\n\t [CustomerRetailID] uniqueidentifier,\n\t [img] nvarchar(4000),\n\t [EmailId] nvarchar(4000)\n\t)\nWITH\n\t(\n\tDISTRIBUTION = REPLICATE,\n\t HEAP\n\t -- CLUSTERED COLUMNSTORE INDEX\n\t)\nGO\n\n\nCREATE TABLE andy.Product\n\t(\n\t [Name] nvarchar(4000),\n\t [Cost] float,\n\t [ListPrice] float,\n\t [RetailProductID] uniqueidentifier\n\t)\nWITH\n\t(\n\tDISTRIBUTION = REPLICATE,\n\tHEAP\n\t)\nGO\n\n\nCREATE TABLE andy.stores\n\t(\n\t [StoreCode] bigint,\n\t [Name] nvarchar(4000),\n\t [Address] nvarchar(4000),\n\t [City] nvarchar(4000),\n\t [State] nvarchar(4000),\n\t [PostalCode] bigint,\n\t [Country] nvarchar(4000),\n\t [Area] bigint,\n\t [NumberofEmployees] bigint,\n\t [StoreRetailID] uniqueidentifier,\n\t [PhoneNumber] nvarchar(4000),\n\t [Website] nvarchar(4000)\n\t)\nWITH\n\t(\n\tDISTRIBUTION = replicate,\n\t HEAP\n\t -- CLUSTERED COLUMNSTORE INDEX\n\t)\nGO\n\nCREATE TABLE andy.TransactionDetail\n\t(\n\t [CustomerRetailID] uniqueidentifier,\n\t [TransactionHeaderID] uniqueidentifier,\n\t [ProductRetailID] uniqueidentifier,\n\t [Quantity] bigint,\n\t [ListPrice] float,\n\t [DiscountAmount] float,\n\t [Tax] float,\n\t [ShippingCost] float,\n\t [TotalAmount] float\n\t)\nWITH\n\t(\n\tDISTRIBUTION = HASH(TransactionHeaderID),\n\t CLUSTERED COLUMNSTORE INDEX\n\t -- HEAP\n\t)\nGO\n\n\nCREATE TABLE andy.TransactionHeader\n\t(\n\t [TransactionHeaderID] uniqueidentifier,\n\t [StoreRetailID] uniqueidentifier,\n\t [CustomerRetailID] uniqueidentifier,\n\t [Title] nvarchar(4000),\n\t [Description] nvarchar(4000),\n\t [Date] datetime2(0),\n\t [TransactionType] nvarchar(4000),\n\t [TransactionTotal] float,\n\t [PaymentMethod] nvarchar(4000),\n\t [Currency] nvarchar(4000)\n\t)\nWITH\n\t(\n\tDISTRIBUTION = HASH(TransactionHeaderID),\n\t CLUSTERED COLUMNSTORE INDEX\n\t -- HEAP\n\t)\nGO\n\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"poolName": "andyrobretaildw",
+				"databaseName": "andyrobretaildw"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
