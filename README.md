@@ -6,7 +6,7 @@
 
 ## [Challenge 3 - Ad-Hoc Exploration](./Challenge-3.md)
 
-## Challenge 4 - Data Transformation
+## [Challenge 4 - Data Transformation] (./Challenge-4.md)
 
 ## Challenge 5 - Load Data to Relational Store
 
