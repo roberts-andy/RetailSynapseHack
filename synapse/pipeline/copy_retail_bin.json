@@ -1,9 +1,9 @@
 {
-	"name": "CopyPipeline_9la",
+	"name": "copy_retail_bin",
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy_9la",
+				"name": "copy data",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -50,13 +50,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "SourceDataset_9la",
+						"referenceName": "retail_source_bin",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "DestinationDataset_9la",
+						"referenceName": "retail_dest_bin",
 						"type": "DatasetReference"
 					}
 				]

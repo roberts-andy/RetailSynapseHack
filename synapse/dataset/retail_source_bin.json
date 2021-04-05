@@ -1,5 +1,5 @@
 {
-	"name": "SourceDataset_9la",
+	"name": "retail_source_bin",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "SourceData_Blob",

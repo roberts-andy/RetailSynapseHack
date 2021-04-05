@@ -1,5 +1,5 @@
 {
-	"name": "DestinationDataset_9la",
+	"name": "retail_dest_bin",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
