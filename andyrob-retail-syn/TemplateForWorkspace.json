@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'andyrob-retail-syn-WorkspaceDefaultSqlServer'"
 		},
+		"andyrob_dw_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'andyrob_dw'"
+		},
 		"andyrob_retail_amlslink_servicePrincipalKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'servicePrincipalKey' of 'andyrob_retail_amlslink'"
@@ -52,6 +56,29 @@
 		"workspaceId": "[concat('Microsoft.Synapse/workspaces/', parameters('workspaceName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('workspaceName'), '/dw_ddl')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "andy/load_dw_from_raw"
+				},
+				"content": {
+					"query": "DROP TABLE andy.Customer\nDROP TABLE andy.Product\nDROP TABLE andy.stores\nDROP TABLE andy.TransactionDetail\nDROP TABLE andy.TransactionHeader\nDROP SCHEMA andy\nGO\n\nCREATE SCHEMA andy\nGO\n\nCREATE TABLE andy.Customer\n\t(\n\t [Name] nvarchar(4000),\n\t [Address] nvarchar(4000),\n\t [City] nvarchar(4000),\n\t [State] nvarchar(4000),\n\t [PostalCode] bigint,\n\t [Country] nvarchar(4000),\n\t [PreferredStore] nvarchar(4000),\n\t [RewardsPoints] bigint,\n\t [CustomerRetailID] uniqueidentifier,\n\t [img] nvarchar(4000),\n\t [EmailId] nvarchar(4000)\n\t)\nWITH\n\t(\n\tDISTRIBUTION = REPLICATE,\n\t HEAP\n\t -- CLUSTERED COLUMNSTORE INDEX\n\t)\nGO\n\n\nCREATE TABLE andy.Product\n\t(\n\t [Name] nvarchar(4000),\n\t [Cost] float,\n\t [ListPrice] float,\n\t [RetailProductID] uniqueidentifier\n\t)\nWITH\n\t(\n\tDISTRIBUTION = REPLICATE,\n\tHEAP\n\t)\nGO\n\n\nCREATE TABLE andy.stores\n\t(\n\t [StoreCode] bigint,\n\t [Name] nvarchar(4000),\n\t [Address] nvarchar(4000),\n\t [City] nvarchar(4000),\n\t [State] nvarchar(4000),\n\t [PostalCode] bigint,\n\t [Country] nvarchar(4000),\n\t [Area] bigint,\n\t [NumberofEmployees] bigint,\n\t [StoreRetailID] uniqueidentifier,\n\t [PhoneNumber] nvarchar(4000),\n\t [Website] nvarchar(4000)\n\t)\nWITH\n\t(\n\tDISTRIBUTION = replicate,\n\t HEAP\n\t -- CLUSTERED COLUMNSTORE INDEX\n\t)\nGO\n\nCREATE TABLE andy.TransactionDetail\n\t(\n\t [CustomerRetailID] uniqueidentifier,\n\t [TransactionHeaderID] uniqueidentifier,\n\t [ProductRetailID] uniqueidentifier,\n\t [Quantity] bigint,\n\t [ListPrice] float,\n\t [DiscountAmount] float,\n\t [Tax] float,\n\t [ShippingCost] float,\n\t [TotalAmount] float\n\t)\nWITH\n\t(\n\tDISTRIBUTION = HASH(TransactionHeaderID),\n\t CLUSTERED COLUMNSTORE INDEX\n\t -- HEAP\n\t)\nGO\n\n\nCREATE TABLE andy.TransactionHeader\n\t(\n\t [TransactionHeaderID] uniqueidentifier,\n\t [StoreRetailID] uniqueidentifier,\n\t [CustomerRetailID] uniqueidentifier,\n\t [Title] nvarchar(4000),\n\t [Description] nvarchar(4000),\n\t [Date] datetime2(0),\n\t [TransactionType] nvarchar(4000),\n\t [TransactionTotal] float,\n\t [PaymentMethod] nvarchar(4000),\n\t [Currency] nvarchar(4000)\n\t)\nWITH\n\t(\n\tDISTRIBUTION = HASH(TransactionHeaderID),\n\t CLUSTERED COLUMNSTORE INDEX\n\t -- HEAP\n\t)\nGO\n\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"poolName": "andyrobretaildw",
+						"databaseName": "andyrobretaildw"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/copy_retail_bin')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
@@ -126,6 +153,1000 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/retail_source_bin')]",
 				"[concat(variables('workspaceId'), '/datasets/retail_dest_bin')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/load_dw')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "load_customer",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "datalake/andyrob/raw/RetailCustomer.csv"
+							},
+							{
+								"name": "Destination",
+								"value": "andy2.Customer"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": false,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings",
+									"skipLineCount": 0
+								}
+							},
+							"sink": {
+								"type": "SqlDWSink",
+								"preCopyScript": "truncate table andy2.customer",
+								"allowPolyBase": true,
+								"polyBaseSettings": {
+									"rejectValue": 0,
+									"rejectType": "value",
+									"useTypeDefault": true
+								},
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": true,
+							"stagingSettings": {
+								"linkedServiceName": {
+									"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+									"type": "LinkedServiceReference"
+								},
+								"path": "datalake/andyrob/polybasestage"
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Address",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Address",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "City",
+											"type": "String"
+										},
+										"sink": {
+											"name": "City",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "State",
+											"type": "String"
+										},
+										"sink": {
+											"name": "State",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "PostalCode",
+											"type": "String"
+										},
+										"sink": {
+											"name": "PostalCode",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Country",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Country",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "PreferredStore",
+											"type": "String"
+										},
+										"sink": {
+											"name": "PreferredStore",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "RewardsPoints",
+											"type": "String"
+										},
+										"sink": {
+											"name": "RewardsPoints",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "CustomerRetailID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CustomerRetailID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "img",
+											"type": "String"
+										},
+										"sink": {
+											"name": "img",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "EmailId",
+											"type": "String"
+										},
+										"sink": {
+											"name": "EmailId",
+											"type": "String"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "raw_customer_csv",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "dw_customer_table",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "load_product",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "datalake/andyrob/raw/RetailCustomer.csv"
+							},
+							{
+								"name": "Destination",
+								"value": "andy2.Customer"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "SqlDWSink",
+								"preCopyScript": "truncate table andy2.product",
+								"allowPolyBase": true,
+								"polyBaseSettings": {
+									"rejectValue": 0,
+									"rejectType": "value",
+									"useTypeDefault": true
+								},
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": true,
+							"stagingSettings": {
+								"linkedServiceName": {
+									"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+									"type": "LinkedServiceReference"
+								},
+								"path": "datalake/andyrob/polybasestage"
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Name"
+										}
+									},
+									{
+										"source": {
+											"name": "Cost",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Cost"
+										}
+									},
+									{
+										"source": {
+											"name": "ListPrice",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "ListPrice"
+										}
+									},
+									{
+										"source": {
+											"name": "RetailProductID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "RetailProductID"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "raw_product_csv",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "dw_product_table",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "load_store",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "datalake/andyrob/raw/RetailCustomer.csv"
+							},
+							{
+								"name": "Destination",
+								"value": "andy2.Customer"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": false,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings",
+									"skipLineCount": 0
+								}
+							},
+							"sink": {
+								"type": "SqlDWSink",
+								"preCopyScript": "truncate table andy2.store",
+								"allowPolyBase": true,
+								"polyBaseSettings": {
+									"rejectValue": 0,
+									"rejectType": "value",
+									"useTypeDefault": true
+								},
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": true,
+							"stagingSettings": {
+								"linkedServiceName": {
+									"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+									"type": "LinkedServiceReference"
+								},
+								"path": "datalake/andyrob/polybasestage"
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "StoreCode",
+											"type": "String"
+										},
+										"sink": {
+											"name": "StoreCode",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Address",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Address",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "City",
+											"type": "String"
+										},
+										"sink": {
+											"name": "City",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "State",
+											"type": "String"
+										},
+										"sink": {
+											"name": "State",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "PostalCode",
+											"type": "String"
+										},
+										"sink": {
+											"name": "PostalCode",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Country",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Country",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Area",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Area",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "NumberofEmployees",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "NumberofEmployees",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "StoreRetailID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "StoreRetailID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "PhoneNumber",
+											"type": "String"
+										},
+										"sink": {
+											"name": "PhoneNumber",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Website",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Website",
+											"type": "String"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "raw_store_csv",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "dw_store_table",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "load_transactiondetail",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "datalake/andyrob/raw/RetailCustomer.csv"
+							},
+							{
+								"name": "Destination",
+								"value": "andy2.Customer"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "SqlDWSink",
+								"preCopyScript": "truncate table andy2.transactiondetail",
+								"allowPolyBase": true,
+								"polyBaseSettings": {
+									"rejectValue": 0,
+									"rejectType": "value",
+									"useTypeDefault": true
+								},
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": true,
+							"stagingSettings": {
+								"linkedServiceName": {
+									"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+									"type": "LinkedServiceReference"
+								},
+								"path": "datalake/andyrob/polybasestage"
+							},
+							"parallelCopies": 8,
+							"dataIntegrationUnits": 8,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "CustomerRetailID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CustomerRetailID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "TransactionHeaderID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TransactionHeaderID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductRetailID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ProductRetailID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Quantity",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Quantity",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ListPrice",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "ListPrice",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "DiscountAmount",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "DiscountAmount",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tax",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tax",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ShippingCost",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "ShippingCost",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "TotalAmount",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "TotalAmount",
+											"type": "String"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "raw_transactiondetail_csv",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "dw_transactiondetail_table",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "load_transactionheader",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "datalake/andyrob/raw/RetailCustomer.csv"
+							},
+							{
+								"name": "Destination",
+								"value": "andy2.Customer"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": false,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings",
+									"skipLineCount": 0
+								}
+							},
+							"sink": {
+								"type": "SqlDWSink",
+								"preCopyScript": "truncate table andy2.transactiondetail",
+								"allowPolyBase": true,
+								"polyBaseSettings": {
+									"rejectValue": 0,
+									"rejectType": "value",
+									"useTypeDefault": true
+								},
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": true,
+							"stagingSettings": {
+								"linkedServiceName": {
+									"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+									"type": "LinkedServiceReference"
+								},
+								"path": "datalake/andyrob/polybasestage"
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "TransactionHeaderID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TransactionHeaderID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "StoreRetailID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "StoreRetailID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "CustomerRetailID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CustomerRetailID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Title",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Title",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Description",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Description",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Date",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "Date",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "TransactionType",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TransactionType",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "TransactionTotal",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "TransactionTotal",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "PaymentMethod",
+											"type": "String"
+										},
+										"sink": {
+											"name": "PaymentMethod",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Currency",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Currency",
+											"type": "String"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "raw_transactionheader_csv",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "dw_transactionHeader_table",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/raw_customer_csv')]",
+				"[concat(variables('workspaceId'), '/datasets/dw_customer_table')]",
+				"[concat(variables('workspaceId'), '/datasets/raw_product_csv')]",
+				"[concat(variables('workspaceId'), '/datasets/dw_product_table')]",
+				"[concat(variables('workspaceId'), '/datasets/raw_store_csv')]",
+				"[concat(variables('workspaceId'), '/datasets/dw_store_table')]",
+				"[concat(variables('workspaceId'), '/datasets/raw_transactiondetail_csv')]",
+				"[concat(variables('workspaceId'), '/datasets/dw_transactiondetail_table')]",
+				"[concat(variables('workspaceId'), '/datasets/raw_transactionheader_csv')]",
+				"[concat(variables('workspaceId'), '/datasets/dw_transactionHeader_table')]",
+				"[concat(variables('workspaceId'), '/linkedServices/andyrob-retail-syn-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/dw_customer_table')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "andyrob_dw",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Address",
+						"type": "nvarchar"
+					},
+					{
+						"name": "City",
+						"type": "nvarchar"
+					},
+					{
+						"name": "State",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PostalCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Country",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PreferredStore",
+						"type": "nvarchar"
+					},
+					{
+						"name": "RewardsPoints",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CustomerRetailID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "img",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EmailId",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "andy2",
+					"table": "Customer"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/andyrob_dw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/raw_customer_csv')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "RetailCustomer.csv",
+						"folderPath": "andyrob/raw",
+						"fileSystem": "datalake"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Name",
+						"type": "String"
+					},
+					{
+						"name": "Address",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "PostalCode",
+						"type": "String"
+					},
+					{
+						"name": "Country",
+						"type": "String"
+					},
+					{
+						"name": "PreferredStore",
+						"type": "String"
+					},
+					{
+						"name": "RewardsPoints",
+						"type": "String"
+					},
+					{
+						"name": "CustomerRetailID",
+						"type": "String"
+					},
+					{
+						"name": "img",
+						"type": "String"
+					},
+					{
+						"name": "EmailId",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/andyrob-retail-syn-WorkspaceDefaultStorage')]"
 			]
 		},
 		{
@@ -255,6 +1276,25 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/andyrob_dw')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('andyrob_dw_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/andyrob_retail_amlslink')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -335,6 +1375,167 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/basic_counts')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "andy/ad-hoc"
+				},
+				"content": {
+					"query": "select top 100 *\nfrom\n    openrowset(\n        bulk 'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailCustomer.csv'\n        , format = 'CSV'\n        , parser_version ='2.0'\n        , header_row = true\n    ) as customers\n\nselect state\n        , city\n        , customercount = count(*) \nfrom\n    openrowset(\n        bulk 'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailCustomer.csv'\n        , format = 'CSV'\n        , parser_version ='2.0'\n        , header_row = true\n    ) as customers\ngroup by state, city\norder by customercount DESC\n\n\nselect top 100 *\n  from\n    openrowset(\n        bulk  'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailTransactionDetails.csv'\n        , format = 'CSV'\n        , parser_version ='2.0'\n        , header_row = true\n    ) as orderdetails\n\n\nselect count(*)\n  from \n      openrowset(\n        bulk  'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailTransactionDetails.csv'\n        , format = 'CSV'\n        , parser_version ='2.0'\n        , header_row = true\n    ) as orderdetails\n\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"poolName": "Built-in",
+						"databaseName": "master"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/load_dw_customer')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "andy/load_dw_from_raw"
+				},
+				"content": {
+					"query": "--CREATE SCHEMA andy\n\n\nIF EXISTS (SELECT * FROM sys.objects O JOIN sys.schemas S ON O.schema_id = S.schema_id WHERE O.NAME = 'customer' AND O.TYPE = 'U' AND S.NAME = 'andy')\nDROP TABLE andy.Customer\n\nCREATE TABLE andy.Customer\n\t(\n\t [Name] nvarchar(4000),\n\t [Address] nvarchar(4000),\n\t [City] nvarchar(4000),\n\t [State] nvarchar(4000),\n\t [PostalCode] bigint,\n\t [Country] nvarchar(4000),\n\t [PreferredStore] nvarchar(4000),\n\t [RewardsPoints] bigint,\n\t [CustomerRetailID] uniqueidentifier,\n\t [img] nvarchar(4000),\n\t [EmailId] nvarchar(4000)\n\t)\nWITH\n\t(\n\tDISTRIBUTION = REPLICATE,\n\t HEAP\n\t -- CLUSTERED COLUMNSTORE INDEX\n\t)\nGO\n\n--Uncomment the 4 lines below to create a stored procedure for data pipeline orchestration​\n--CREATE PROC andy.bulk_load_customer\n--AS\n--BEGIN\nCOPY INTO andy.Customer\n(Name 1, Address 2, City 3, State 4, PostalCode 5, Country 6, PreferredStore 7, RewardsPoints 8, CustomerRetailID 9, img 10, EmailId 11)\nFROM 'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailCustomer.csv'\nWITH\n(\n\tFILE_TYPE = 'CSV'\n\t,MAXERRORS = 0\n\t,FIRSTROW = 2\n\t,ERRORFILE = 'https://andyrobretailstor.dfs.core.windows.net/datalake/'\n\t,IDENTITY_INSERT = 'OFF'\n)\n--END\nGO\n\nSELECT TOP 100 * FROM andy.Customer\nGO\n\n\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"poolName": "andyrobretaildw",
+						"databaseName": "andyrobretaildw"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/load_dw_product')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "andy/load_dw_from_raw"
+				},
+				"content": {
+					"query": "IF NOT EXISTS (SELECT * FROM sys.objects O JOIN sys.schemas S ON O.schema_id = S.schema_id WHERE O.NAME = 'Product' AND O.TYPE = 'U' AND S.NAME = 'andy')\nCREATE TABLE andy.Product\n\t(\n\t [Name] nvarchar(4000),\n\t [Cost] float,\n\t [ListPrice] float,\n\t [RetailProductID] uniqueidentifier\n\t)\nWITH\n\t(\n\tDISTRIBUTION = REPLICATE,\n\tHEAP\n\t)\nGO\n\n--Uncomment the 4 lines below to create a stored procedure for data pipeline orchestration​\n--CREATE PROC bulk_load_Product\n--AS\n--BEGIN\nCOPY INTO andy.Product\n(Name 1, Cost 2, ListPrice 3, RetailProductID 4)\nFROM 'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailProducts.csv'\nWITH\n(\n\tFILE_TYPE = 'CSV'\n\t,MAXERRORS = 0\n\t,FIRSTROW = 2\n\t,ERRORFILE = 'https://andyrobretailstor.dfs.core.windows.net/datalake/'\n\t,IDENTITY_INSERT = 'OFF'\n)\n--END\nGO\n\nSELECT TOP 100 * FROM andy.Product\nGO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"poolName": "andyrobretaildw",
+						"databaseName": "andyrobretaildw"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/load_dw_stores')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "andy/load_dw_from_raw"
+				},
+				"content": {
+					"query": "IF NOT EXISTS (SELECT * FROM sys.objects O JOIN sys.schemas S ON O.schema_id = S.schema_id WHERE O.NAME = 'stores' AND O.TYPE = 'U' AND S.NAME = 'andy')\nCREATE TABLE andy.stores\n\t(\n\t [StoreCode] bigint,\n\t [Name] nvarchar(4000),\n\t [Address] nvarchar(4000),\n\t [City] nvarchar(4000),\n\t [State] nvarchar(4000),\n\t [PostalCode] bigint,\n\t [Country] nvarchar(4000),\n\t [Area] bigint,\n\t [NumberofEmployees] bigint,\n\t [StoreRetailID] uniqueidentifier,\n\t [PhoneNumber] nvarchar(4000),\n\t [Website] nvarchar(4000)\n\t)\nWITH\n\t(\n\tDISTRIBUTION = replicate,\n\t HEAP\n\t -- CLUSTERED COLUMNSTORE INDEX\n\t)\nGO\n\n--Uncomment the 4 lines below to create a stored procedure for data pipeline orchestration​\n--CREATE PROC bulk_load_stores\n--AS\n--BEGIN\nCOPY INTO andy.stores\n(StoreCode 1, Name 2, Address 3, City 4, State 5, PostalCode 6, Country 7, Area 8, NumberofEmployees 9, StoreRetailID 10, PhoneNumber 11, Website 12)\nFROM 'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailStores.csv'\nWITH\n(\n\tFILE_TYPE = 'CSV'\n\t,MAXERRORS = 0\n\t,FIRSTROW = 2\n\t,ERRORFILE = 'https://andyrobretailstor.dfs.core.windows.net/datalake/'\n\t,IDENTITY_INSERT = 'OFF'\n)\n--END\nGO\n\nSELECT TOP 100 * FROM andy.stores\nGO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"poolName": "andyrobretaildw",
+						"databaseName": "andyrobretaildw"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/load_dw_transactiondetail')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "andy/load_dw_from_raw"
+				},
+				"content": {
+					"query": "-- DROP TABLE andy.TransactionDetail\n\nIF NOT EXISTS (SELECT * FROM sys.objects O JOIN sys.schemas S ON O.schema_id = S.schema_id WHERE O.NAME = 'TransactionDetail' AND O.TYPE = 'U' AND S.NAME = 'andy')\nCREATE TABLE andy.TransactionDetail\n\t(\n\t [CustomerRetailID] uniqueidentifier,\n\t [TransactionHeaderID] uniqueidentifier,\n\t [ProductRetailID] uniqueidentifier,\n\t [Quantity] bigint,\n\t [ListPrice] float,\n\t [DiscountAmount] float,\n\t [Tax] float,\n\t [ShippingCost] float,\n\t [TotalAmount] float\n\t)\nWITH\n\t(\n\tDISTRIBUTION = HASH(TransactionHeaderID),\n\t CLUSTERED COLUMNSTORE INDEX\n\t -- HEAP\n\t)\nGO\n\n--Uncomment the 4 lines below to create a stored procedure for data pipeline orchestration​\n--CREATE PROC bulk_load_TransactionDetail\n--AS\n--BEGIN\nCOPY INTO andy.TransactionDetail\n(CustomerRetailID 1, TransactionHeaderID 2, ProductRetailID 3, Quantity 4, ListPrice 5, DiscountAmount 6, Tax 7, ShippingCost 8, TotalAmount 9)\nFROM 'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailTransactionDetails.csv'\nWITH\n(\n\tFILE_TYPE = 'CSV'\n\t,MAXERRORS = 0\n\t,FIRSTROW = 2\n\t,ERRORFILE = 'https://andyrobretailstor.dfs.core.windows.net/datalake/'\n\t,IDENTITY_INSERT = 'OFF'\n)\n--END\nGO\n\nSELECT TOP 100 * FROM andy.TransactionDetail\nGO\n\nDBCC PDW_SHOWSPACEUSED('andy.TransactionDetail');\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"poolName": "andyrobretaildw",
+						"databaseName": "andyrobretaildw"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/load_dw_transactionheader')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "andy/load_dw_from_raw"
+				},
+				"content": {
+					"query": "IF NOT EXISTS (SELECT * FROM sys.objects O JOIN sys.schemas S ON O.schema_id = S.schema_id WHERE O.NAME = 'TransactionHeader' AND O.TYPE = 'U' AND S.NAME = 'andy')\nCREATE TABLE andy.TransactionHeader\n\t(\n\t [TransactionHeaderID] uniqueidentifier,\n\t [StoreRetailID] uniqueidentifier,\n\t [CustomerRetailID] uniqueidentifier,\n\t [Title] nvarchar(4000),\n\t [Description] nvarchar(4000),\n\t [Date] datetime2(0),\n\t [TransactionType] nvarchar(4000),\n\t [TransactionTotal] float,\n\t [PaymentMethod] nvarchar(4000),\n\t [Currency] nvarchar(4000)\n\t)\nWITH\n\t(\n\tDISTRIBUTION = HASH(TransactionHeaderID),\n\t CLUSTERED COLUMNSTORE INDEX\n\t -- HEAP\n\t)\nGO\n\n--Uncomment the 4 lines below to create a stored procedure for data pipeline orchestration​\n--CREATE PROC bulk_load_TransactionHeader\n--AS\n--BEGIN\nCOPY INTO andy.TransactionHeader\n(TransactionHeaderID 1, StoreRetailID 2, CustomerRetailID 3, Title 4, Description 5, Date 6, TransactionType 7, TransactionTotal 8, PaymentMethod 9, Currency 10)\nFROM 'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailTransactionHeader.csv'\nWITH\n(\n\tFILE_TYPE = 'CSV'\n\t,MAXERRORS = 0\n\t,FIRSTROW = 2\n\t,ERRORFILE = 'https://andyrobretailstor.dfs.core.windows.net/datalake/'\n\t,IDENTITY_INSERT = 'OFF'\n)\n--END\nGO\n\nSELECT TOP 100 * FROM andy.TransactionHeader\nGO\n\nDBCC PDW_SHOWSPACEUSED('andy.TransactionHeader');\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"poolName": "andyrobretaildw",
+						"databaseName": "andyrobretaildw"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/sqlondemand-views-raw')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "andy/ad-hoc"
+				},
+				"content": {
+					"query": "\ncreate database SourceViewsDb\n\nuse SourceViewsDb\n\ncreate view vTransactionDetails \nas\nselect * \n  from \n    openrowset(\n        bulk  'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailTransactionDetails.csv'\n        , format = 'CSV'\n        , parser_version ='2.0'\n        , header_row = true\n    ) txndetails\nGO\n\ncreate view vTransactionHeader\nas\nselect * \n  from \n    openrowset(\n        bulk  'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailTransactionHeader.csv'\n        , format = 'CSV'\n        , parser_version ='2.0'\n        , header_row = true\n    ) txnheader\ngo\n\ncreate view vCustomer\nas\nselect * \n  from \n    openrowset(\n        bulk  'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailCustomer.csv'\n        , format = 'CSV'\n        , parser_version ='2.0'\n        , header_row = true\n    ) customer\ngo\n\ncreate view vProducts\nas\nselect * \n  from \n    openrowset(\n        bulk  'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailProducts.csv'\n        , format = 'CSV'\n        , parser_version ='2.0'\n        , header_row = true\n    ) products\ngo\n\ncreate view vStores\nas\nselect * \n  from \n    openrowset(\n        bulk  'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailStores.csv'\n        , format = 'CSV'\n        , parser_version ='2.0'\n        , header_row = true\n    ) stores\ngo\n\n\n\n\nselect top 10 * from vTransactionDetails\nselect top 10 * from vTransactionHeader\nselect top 10 * from vProducts\nselect top 10 * from vStores\nselect top 10 * from vCustomer\n\n\nselect top 10\n  c.name\n  , count(*)\n  from vTransactionHeader th \n  join vCustomer c\n    on th.CustomerRetailID = c.CustomerRetailID\ngroup by c.name\norder by 2 desc\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"poolName": "Built-in",
+						"databaseName": "SourceViewsDb"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/andyrobretaildw')]",
 			"type": "Microsoft.Synapse/workspaces/sqlPools",
 			"apiVersion": "2019-06-01-preview",
@@ -348,23 +1549,367 @@
 			"location": "eastus"
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/SQL script 1')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"name": "[concat(parameters('workspaceName'), '/dw_product_table')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
-				"content": {
-					"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://andyrobretailstor.dfs.core.windows.net/datalake/andyrob/raw/RetailCustomer.csv',\n        FORMAT = 'CSV',\n        PARSER_VERSION='2.0'\n    ) AS [result]\r\n",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"name": "master",
-						"type": "SqlOnDemand"
-					}
+				"linkedServiceName": {
+					"referenceName": "andyrob_dw",
+					"type": "LinkedServiceReference"
 				},
-				"type": "SqlQuery"
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cost",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "ListPrice",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "RetailProductID",
+						"type": "uniqueidentifier"
+					}
+				],
+				"typeProperties": {
+					"schema": "andy2",
+					"table": "Product"
+				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/andyrob_dw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/raw_product_csv')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "RetailProducts.csv",
+						"folderPath": "andyrob/raw",
+						"fileSystem": "datalake"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\"",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Name",
+						"type": "String"
+					},
+					{
+						"name": "Cost",
+						"type": "String"
+					},
+					{
+						"name": "ListPrice",
+						"type": "String"
+					},
+					{
+						"name": "RetailProductID",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/andyrob-retail-syn-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/raw_store_csv')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "RetailStores.csv",
+						"folderPath": "andyrob/raw",
+						"fileSystem": "datalake"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "StoreCode",
+						"type": "String"
+					},
+					{
+						"name": "Name",
+						"type": "String"
+					},
+					{
+						"name": "Address",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "PostalCode",
+						"type": "String"
+					},
+					{
+						"name": "Country",
+						"type": "String"
+					},
+					{
+						"name": "Area",
+						"type": "String"
+					},
+					{
+						"name": "NumberofEmployees",
+						"type": "String"
+					},
+					{
+						"name": "StoreRetailID",
+						"type": "String"
+					},
+					{
+						"name": "PhoneNumber",
+						"type": "String"
+					},
+					{
+						"name": "Website",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/andyrob-retail-syn-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/raw_transactiondetail_csv')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "RetailTransactionDetails.csv",
+						"folderPath": "andyrob/raw",
+						"fileSystem": "datalake"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "CustomerRetailID",
+						"type": "String"
+					},
+					{
+						"name": "TransactionHeaderID",
+						"type": "String"
+					},
+					{
+						"name": "ProductRetailID",
+						"type": "String"
+					},
+					{
+						"name": "Quantity",
+						"type": "String"
+					},
+					{
+						"name": "ListPrice",
+						"type": "String"
+					},
+					{
+						"name": "DiscountAmount",
+						"type": "String"
+					},
+					{
+						"name": "Tax",
+						"type": "String"
+					},
+					{
+						"name": "ShippingCost",
+						"type": "String"
+					},
+					{
+						"name": "TotalAmount",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/andyrob-retail-syn-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/raw_transactionheader_csv')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "RetailTransactionHeader.csv",
+						"folderPath": "andyrob/raw",
+						"fileSystem": "datalake"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "TransactionHeaderID",
+						"type": "String"
+					},
+					{
+						"name": "StoreRetailID",
+						"type": "String"
+					},
+					{
+						"name": "CustomerRetailID",
+						"type": "String"
+					},
+					{
+						"name": "Title",
+						"type": "String"
+					},
+					{
+						"name": "Description",
+						"type": "String"
+					},
+					{
+						"name": "Date",
+						"type": "String"
+					},
+					{
+						"name": "TransactionType",
+						"type": "String"
+					},
+					{
+						"name": "TransactionTotal",
+						"type": "String"
+					},
+					{
+						"name": "PaymentMethod",
+						"type": "String"
+					},
+					{
+						"name": "Currency",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/andyrob-retail-syn-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/dw_store_table')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "andyrob_dw",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "andy2",
+					"table": "Store"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/andyrob_dw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/dw_transactiondetail_table')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "andyrob_dw",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "andy2",
+					"table": "TransactionDetail"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/andyrob_dw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/dw_transactionHeader_table')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "andyrob_dw",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "andy2",
+					"table": "TransactionHeader"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/andyrob_dw')]"
+			]
 		}
 	]
 }

@@ -8,6 +8,9 @@
 		"andyrob-retail-syn-WorkspaceDefaultSqlServer_connectionString": {
 			"value": ""
 		},
+		"andyrob_dw_connectionString": {
+			"value": ""
+		},
 		"andyrob_retail_amlslink_servicePrincipalKey": {
 			"value": ""
 		},
