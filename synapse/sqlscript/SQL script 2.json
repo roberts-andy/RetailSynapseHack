@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 2",
+	"properties": {
+		"content": {
+			"query": "SELECT TOP (100) [TransactionHeaderID]\n,[StoreRetailID]\n,[CustomerRetailID]\n,[Title]\n,[Description]\n,[Date]\n,[TransactionType]\n,[TransactionTotal]\n,[PaymentMethod]\n,[Currency]\n FROM [dbo].[vTransactionHeader]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"poolName": "Built-in",
+				"databaseName": "SourceViewsDb"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
