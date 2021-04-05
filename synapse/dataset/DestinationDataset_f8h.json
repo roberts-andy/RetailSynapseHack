@@ -1,0 +1,16 @@
+{
+	"name": "DestinationDataset_f8h",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "andyrob_dw",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "andy2",
+			"table": "Customer"
+		}
+	}
+}

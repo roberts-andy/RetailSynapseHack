@@ -1,0 +1,189 @@
+{
+	"name": "load_dw",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy_f8h",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "datalake/andyrob/raw/RetailCustomer.csv"
+					},
+					{
+						"name": "Destination",
+						"value": "andy2.Customer"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": false,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings",
+							"skipLineCount": 0
+						}
+					},
+					"sink": {
+						"type": "SqlDWSink",
+						"allowPolyBase": true,
+						"polyBaseSettings": {
+							"rejectValue": 0,
+							"rejectType": "value",
+							"useTypeDefault": true
+						},
+						"tableOption": "autoCreate"
+					},
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+							"type": "LinkedServiceReference"
+						},
+						"path": "datalake/andyrob/polybasestage"
+					},
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Name",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Address",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Address",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "City",
+									"type": "String"
+								},
+								"sink": {
+									"name": "City",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "State",
+									"type": "String"
+								},
+								"sink": {
+									"name": "State",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PostalCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PostalCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Country",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Country",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PreferredStore",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PreferredStore",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "RewardsPoints",
+									"type": "String"
+								},
+								"sink": {
+									"name": "RewardsPoints",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CustomerRetailID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CustomerRetailID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "img",
+									"type": "String"
+								},
+								"sink": {
+									"name": "img",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "EmailId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "EmailId",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SourceDataset_f8h",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DestinationDataset_f8h",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}
