@@ -1,8 +1,8 @@
 # Challenge 2 - Copy some Data
 
-Hey, the first requirements have hit your inbox! I know you are excited to get going and since we are data people here, let's start but ingesting some data!
+Hey, the first requirements have hit your inbox! I know you are excited to get going and since we are data people here, let's start by ingesting some data!
 
-Another team has been working on extracting data from some source systems an dropping it into an Azure storage account for you. Aren't they sweet. 
+Another team has been working on extracting data from some source systems and dropping it into an Azure storage account for you. Aren't they sweet. 
 
 > This is a bit of a hack to get you to data quickly without much supporting infrastructure. Through a similar process we can access data from on-prem systems, cloud databases, service APIs, etc.
 
@@ -18,6 +18,6 @@ https://andyrobretaildata.blob.core.windows.net/?sv=2020-02-10&ss=b&srt=sco&sp=r
 ## Resources and Links
 
 Some Links that may be helpful to you: 
-* Link1
-* Link2
-* Link3
+* [Integrate Data with Azure Data Factory or Azure Synapse Pipelines](https://docs.microsoft.com/en-us/learn/modules/data-integration-azure-data-factory/)
+* [Azure Data Factory Documentation](https://docs.microsoft.com/en-us/azure/data-factory/)
+* [Azure Synapse Analytics Documentation](https://docs.microsoft.com/en-us/azure/synapse-analytics/)
