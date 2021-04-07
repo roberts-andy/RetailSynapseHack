@@ -24,3 +24,4 @@ Some Links that may be helpful to you:
 * [Azure Data Factory Documentation](https://docs.microsoft.com/en-us/azure/data-factory/)
 * [Azure Synapse Analytics Documentation](https://docs.microsoft.com/en-us/azure/synapse-analytics/)
 * [Azure Storage Explorer](https://docs.microsoft.com/en-us/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows)
+* [Azure Synapse Copy Data Tool](https://docs.microsoft.com/en-us/azure/data-factory/copy-data-tool)
