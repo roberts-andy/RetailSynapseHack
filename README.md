@@ -8,7 +8,7 @@
 
 ## [Challenge 4 - Data Transformation](./Challenge-4.md)
 
-## Challenge 5 - Load Data to Relational Store
+## [Challenge 5 - Load Data to Relational Store](./Challenge-5.md)
 
 ## Challenge 6 - Create Initial Report
 
