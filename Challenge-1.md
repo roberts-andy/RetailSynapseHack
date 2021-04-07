@@ -23,12 +23,8 @@ In the synapse workspace you should find a linked storage account. This is your 
 * Get familiar with the resources that are provisioned for you
 * Create a folder for your team's work
 * Ensure all members of your team have access to that folder
-<<<<<<< HEAD
-* your environment is configured to work with a github repo - create a branch for your team
 * upload a file to your folder
-=======
 * Your environment is configured to work with a github repo - create a branch for your team
->>>>>>> 5e2540c851af5849cc2396c881a6c7b5d0bfcf26
 
 Great! Now find a couch and walk them through how your met the challenge objective, we'll see you on the next challenge.
 
