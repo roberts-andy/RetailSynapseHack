@@ -18,10 +18,13 @@ Let's try and answer these three questions:
 ## Note
 There are several ways to approach this problem. Try one or several approaches. When you speak to your coach to show your results you should be able to explain why you chose a given approach. Note - you don't need to answer every question with each approach you try.
 
+> Hint: Navigate to your files in the data hub and right-click on a file!
+
 ## Resources and Links
 
 Some Links that may be helpful to you: 
-* Link1
-* Link2
-* Link3
-
+* [Azure Synapse Serverless Pools Learning Path](https://docs.microsoft.com/en-us/learn/paths/build-data-analytics-solutions-using-azure-synapse-serverless-sql-pools/)
+* [Query Data with Synapse SQL Serverless Pools](https://docs.microsoft.com/en-us/azure/synapse-analytics/sql/develop-storage-files-overview)
+* [Creating Views with Synapse SQL Serverless Pools](https://docs.microsoft.com/en-us/azure/synapse-analytics/sql/create-use-views)
+* [Analyzing Data with Synapse Spark Pool](https://docs.microsoft.com/en-us/azure/synapse-analytics/get-started-analyze-spark)
+* [Query Azure Data Lake from Azure Databricks](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-use-databricks-spark)
