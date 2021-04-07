@@ -9,7 +9,7 @@ Business is growing out of control! Some of the data that you have been loading 
 ## Challenge Objectives
 
 Create a new file that contains
-* create a schema in the Azure Synapse Dedicated SQL Pool for your work
+* Create a schema in the Azure Synapse Dedicated SQL Pool for your work
 * Create 5 tables in your schema: Customer, Product, Store, TransactionDetail, TransactionHeader
 * Load the 5 files in your datalake storage account into your new tables
 * Descibe the distribution method that you selected for each table. Why did you choose this distribution? What are some pros and cons of that model? 
@@ -24,4 +24,3 @@ Some Links that may be helpful to you:
 * [Bulk Load Data into Dedicated SQL Pool](https://docs.microsoft.com/en-us/azure/synapse-analytics/quickstart-load-studio-sql-pool)
 * [Designing a Polybase Data Loading Strategy](https://docs.microsoft.com/en-us/azure/synapse-analytics/sql/load-data-overview)
 * [Write data from Synapse Spark Pool to SQL Dedicated Pool](https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/synapse-spark-sql-pool-import-export)
-* 
