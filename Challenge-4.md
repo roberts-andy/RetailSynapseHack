@@ -24,4 +24,4 @@ Some Links that may be helpful to you:
 * [CETAS - Create External Table as Select](https://docs.microsoft.com/en-us/azure/synapse-analytics/sql/develop-tables-cetas)
 * [Store Query Results to Storage using Serverless SQL Pool](https://docs.microsoft.com/en-us/azure/synapse-analytics/sql/create-external-table-as-select)
 * [Write to Datalake fom Synapse Spark Pool](https://github.com/Azure-Samples/Synapse/blob/main/Notebooks/PySpark/01%20Read%20and%20write%20data%20from%20Azure%20Data%20Lake%20Storage%20Gen2.ipynb)
-* 
+
