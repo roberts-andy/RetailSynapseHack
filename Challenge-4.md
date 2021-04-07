@@ -15,9 +15,13 @@ Create a new file that contains
 * Total Transaction Amount for that store/month
 * Total Shipping Costs for that store/month
 
+> Hint: Don't pay attention to getting column names or details of te aggregations exactly correct. Really the challenge is about transforming data into a curated data set. 
+
 ## Resources and Links
 
 Some Links that may be helpful to you: 
-* Link1
-* Link2
-* Link3
+* [Azure Synapse Integration Pipleine Data Flows](https://docs.microsoft.com/en-us/azure/data-factory/control-flow-execute-data-flow-activity)
+* [CETAS - Create External Table as Select](https://docs.microsoft.com/en-us/azure/synapse-analytics/sql/develop-tables-cetas)
+* [Store Query Results to Storage using Serverless SQL Pool](https://docs.microsoft.com/en-us/azure/synapse-analytics/sql/create-external-table-as-select)
+* [Write to Datalake fom Synapse Spark Pool](https://github.com/Azure-Samples/Synapse/blob/main/Notebooks/PySpark/01%20Read%20and%20write%20data%20from%20Azure%20Data%20Lake%20Storage%20Gen2.ipynb)
+* 
