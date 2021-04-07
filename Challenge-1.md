@@ -23,7 +23,7 @@ In the synapse workspace you should find a linked storage account. This is your 
 * Get familiar with the resources that are provisioned for you
 * Create a folder for your team's work
 * Ensure all members of your team have access to that folder
-* upload a file to your folder
+* Upload a file to your folder
 * Your environment is configured to work with a github repo - create a branch for your team
 
 Great! Now find a couch and walk them through how your met the challenge objective, we'll see you on the next challenge.
@@ -32,8 +32,7 @@ Great! Now find a couch and walk them through how your met the challenge objecti
 
 Some Links that may be helpful to you: 
 * [Azure Data Lake Storage Gen2](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction)
-* Link2
-* Link3
+* [Azure Synapse Workspace Data Hub](https://www.techtalkcorner.com/azure-synapse-analytics-data-hub/)
 
 
 
