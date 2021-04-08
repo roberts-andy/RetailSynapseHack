@@ -28,3 +28,6 @@ Some Links that may be helpful to you:
 * [Creating Views with Synapse SQL Serverless Pools](https://docs.microsoft.com/en-us/azure/synapse-analytics/sql/create-use-views)
 * [Analyzing Data with Synapse Spark Pool](https://docs.microsoft.com/en-us/azure/synapse-analytics/get-started-analyze-spark)
 * [Query Azure Data Lake from Azure Databricks](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-use-databricks-spark)
+
+## [Previous](Challenge-2.md)
+## [Next](Challenge-4.md)

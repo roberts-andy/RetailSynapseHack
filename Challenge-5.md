@@ -24,3 +24,6 @@ Some Links that may be helpful to you:
 * [Bulk Load Data into Dedicated SQL Pool](https://docs.microsoft.com/en-us/azure/synapse-analytics/quickstart-load-studio-sql-pool)
 * [Designing a Polybase Data Loading Strategy](https://docs.microsoft.com/en-us/azure/synapse-analytics/sql/load-data-overview)
 * [Write data from Synapse Spark Pool to SQL Dedicated Pool](https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/synapse-spark-sql-pool-import-export)
+
+## [Previous](Challenge-4.md)
+## [Next](Challenge-6.md)

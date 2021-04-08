@@ -10,7 +10,7 @@
 
 ## [Challenge 5 - Load Data to Relational Store](./Challenge-5.md)
 
-## Challenge 6 - Create Initial Report
+## [Challenge 6 - Create Initial Report](./Challenge-6.md)
 
 ## Challenge 7 - Create / Deploy / Test Machine Learning Model
 
