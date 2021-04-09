@@ -5,6 +5,7 @@ Fantastic job! You now have data in the data warehouse. Reporting teams are fire
 
 At the end of the challenge you should have a Power BI Desktop file that you can share with your coach. Walk through how you connected to data. Did you use import, direct query or hybrid mode and why? 
 
+> hint: here is an example of a quick and dirty power bi report: [sample report](./basic_report.pbix)
 ## Resources and Links
 
 Some Links that may be helpful to you: 
