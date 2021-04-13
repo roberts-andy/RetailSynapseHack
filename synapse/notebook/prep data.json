@@ -1,5 +1,5 @@
 {
-	"name": "Notebook 1",
+	"name": "prep data",
 	"properties": {
 		"nbformat": 4,
 		"nbformat_minor": 2,
@@ -162,12 +162,12 @@
 				},
 				"source": [
 					"%%pyspark\r\n",
-					"dfTxnHDetails = spark.read.load('abfss://datalake@andyrobretailstor.dfs.core.windows.net/andyrob/raw/RetailTransactionDetails.csv', format='csv'\r\n",
+					"dfTxnDetail = spark.read.load('abfss://datalake@andyrobretailstor.dfs.core.windows.net/andyrob/raw/RetailTransactionDetails.csv', format='csv'\r\n",
 					", header=True\r\n",
 					")\r\n",
-					"dfTxnHeader.write.mode(\"overwrite\").saveAsTable(\"default.TransactionDetails\")"
+					"dfTxnDetail.write.mode(\"overwrite\").saveAsTable(\"default.TransactionDetail\")"
 				],
-				"execution_count": 6
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
@@ -189,9 +189,9 @@
 				"source": [
 					"%%sql\r\n",
 					"\r\n",
-					"select count(*) from default.transactiondetails"
+					"select count(*) from default.transactiondetail"
 				],
-				"execution_count": 7
+				"execution_count": 10
 			},
 			{
 				"cell_type": "code",
@@ -213,20 +213,136 @@
 				"source": [
 					"%%sql \r\n",
 					"\r\n",
-					"create view vProcessedData\r\n",
+					"create or replace view vProcessedData\r\n",
 					"as\r\n",
-					"select year(to_date(h.Date)), month(to_date(h.Date)), count(*)\r\n",
-					"  from default.transactiondetails d\r\n",
+					"select year(to_date(h.Date)) as year\r\n",
+					"        , month(to_date(h.Date)) as month\r\n",
+					"        , s.StoreRetailID \r\n",
+					"        , min(s.StoreCode) as StoreCode\r\n",
+					"        , count(*) as txnCount\r\n",
+					"        , sum(d.totalAmount) as totalAmount\r\n",
+					"        , sum(d.shippingCost) as shippingCost\r\n",
+					"  from default.transactiondetail d\r\n",
 					"  join default.transactionheader h\r\n",
 					"    on d.TransactionHeaderID = h.TransactionHeaderID\r\n",
 					"  join default.store s\r\n",
 					"    on h.StoreRetailID = s.StoreRetailID\r\n",
-					"  group by year(to_date(h.Date)), month(to_date(h.Date))\r\n",
-					"limit 10\r\n",
+					"  group by year(to_date(h.Date)), month(to_date(h.Date)), s.StoreRetailID\r\n",
 					"\r\n",
 					""
 				],
-				"execution_count": 1
+				"execution_count": 34
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": true
+				},
+				"source": [
+					"dfProcessed = spark.sql(\"SELECT * FROM default.vprocesseddata\")\r\n",
+					"\r\n",
+					"\r\n",
+					""
+				],
+				"execution_count": 35
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": true
+				},
+				"source": [
+					"dfProcessed.write.mode(saveMode=\"OverWrite\").option('header', True).csv('abfss://datalake@andyrobretailstor.dfs.core.windows.net/andyrob/processed/StoreSalesByMonthSynapseSpark.csv')"
+				],
+				"execution_count": 36
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "sparksql"
+					},
+					"collapsed": false
+				},
+				"source": [
+					"%%sql \r\n",
+					"\r\n",
+					"create or replace view vMLDataSet \r\n",
+					"AS\r\n",
+					"select *, to_date(concat(year, '-', month, '-01')) as month_date \r\n",
+					"  from vprocesseddata"
+				],
+				"execution_count": 37
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "sparksql"
+					},
+					"collapsed": false
+				},
+				"source": [
+					"%%sql \r\n",
+					"\r\n",
+					"select count(*) from vmldataset "
+				],
+				"execution_count": 38
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": true
+				},
+				"source": [
+					""
+				],
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
