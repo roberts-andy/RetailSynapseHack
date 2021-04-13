@@ -1,0 +1,231 @@
+{
+	"name": "Notebook 1",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "andyrobretailsp",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "56g",
+			"driverCores": 8,
+			"executorMemory": "56g",
+			"executorCores": 8,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"synapse_widget": {
+				"version": "0.1"
+			},
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/9d290722-4001-4cf6-b052-13b789f01760/resourceGroups/andyrob-retail-rg/providers/Microsoft.Synapse/workspaces/andyrob-retail-syn/bigDataPools/andyrobretailsp",
+				"name": "andyrobretailsp",
+				"type": "Spark",
+				"endpoint": "https://andyrob-retail-syn.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/andyrobretailsp",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "2.4",
+				"nodeCount": 10,
+				"cores": 8,
+				"memory": 56,
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"dfCustomer = spark.read.load('abfss://datalake@andyrobretailstor.dfs.core.windows.net/andyrob/raw/RetailCustomer.csv', format='csv'\r\n",
+					", header=True\r\n",
+					")\r\n",
+					"dfCustomer.write.mode(\"overwrite\").saveAsTable(\"default.Customer\")"
+				],
+				"execution_count": 2
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"dfProduct = spark.read.load('abfss://datalake@andyrobretailstor.dfs.core.windows.net/andyrob/raw/RetailProducts.csv', format='csv'\r\n",
+					", header=True\r\n",
+					")\r\n",
+					"dfProduct.write.mode(\"overwrite\").saveAsTable(\"default.Product\")"
+				],
+				"execution_count": 3
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"dfStore = spark.read.load('abfss://datalake@andyrobretailstor.dfs.core.windows.net/andyrob/raw/RetailStores.csv', format='csv'\r\n",
+					", header=True\r\n",
+					")\r\n",
+					"dfStore.write.mode(\"overwrite\").saveAsTable(\"default.Store\")"
+				],
+				"execution_count": 4
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"dfTxnHeader = spark.read.load('abfss://datalake@andyrobretailstor.dfs.core.windows.net/andyrob/raw/RetailTransactionHeader.csv', format='csv'\r\n",
+					", header=True\r\n",
+					")\r\n",
+					"dfTxnHeader.write.mode(\"overwrite\").saveAsTable(\"default.TransactionHeader\")"
+				],
+				"execution_count": 5
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"dfTxnHDetails = spark.read.load('abfss://datalake@andyrobretailstor.dfs.core.windows.net/andyrob/raw/RetailTransactionDetails.csv', format='csv'\r\n",
+					", header=True\r\n",
+					")\r\n",
+					"dfTxnHeader.write.mode(\"overwrite\").saveAsTable(\"default.TransactionDetails\")"
+				],
+				"execution_count": 6
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "sparksql"
+					},
+					"collapsed": false
+				},
+				"source": [
+					"%%sql\r\n",
+					"\r\n",
+					"select count(*) from default.transactiondetails"
+				],
+				"execution_count": 7
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "sparksql"
+					},
+					"collapsed": false
+				},
+				"source": [
+					"%%sql \r\n",
+					"\r\n",
+					"select year(to_date(h.Date)), month(to_date(h.Date)), count(*)\r\n",
+					"  from default.transactiondetails d\r\n",
+					"  join default.transactionheader h\r\n",
+					"    on d.TransactionHeaderID = h.TransactionHeaderID\r\n",
+					"  join default.store s\r\n",
+					"    on h.StoreRetailID = s.StoreRetailID\r\n",
+					"  group by year(to_date(h.Date)), month(to_date(h.Date))\r\n",
+					"limit 10\r\n",
+					"\r\n",
+					""
+				],
+				"execution_count": null
+			}
+		]
+	}
+}
