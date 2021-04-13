@@ -186,7 +186,7 @@
 				]
 			},
 			{
-				"name": "load_product",
+				"name": "load_products",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
