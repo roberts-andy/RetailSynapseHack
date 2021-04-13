@@ -15,7 +15,7 @@ Create a new file that contains
 * Total Transaction Amount for that store/month
 * Total Shipping Costs for that store/month
 
-> Hint: Don't pay attention to getting column names or details of te aggregations exactly correct. Really the challenge is about transforming data into a curated data set. 
+> Hint: Don't pay attention to getting column names or details of the aggregations exactly correct. Really the challenge is about transforming data into a curated data set. 
 
 ## Resources and Links
 
