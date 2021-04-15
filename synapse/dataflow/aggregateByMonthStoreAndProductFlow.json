@@ -1,0 +1,95 @@
+{
+	"name": "aggregateByMonthStoreAndProductFlow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "raw_store_csv",
+						"type": "DatasetReference"
+					},
+					"name": "rawStore"
+				},
+				{
+					"dataset": {
+						"referenceName": "raw_transactionheader_csv",
+						"type": "DatasetReference"
+					},
+					"name": "rawHeader"
+				},
+				{
+					"dataset": {
+						"referenceName": "raw_transactiondetail_csv",
+						"type": "DatasetReference"
+					},
+					"name": "rawDetail"
+				},
+				{
+					"dataset": {
+						"referenceName": "raw_product_csv",
+						"type": "DatasetReference"
+					},
+					"name": "rawProduct"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkByMonthStoreAndProduct"
+				},
+				{
+					"linkedService": {
+						"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkByMonth"
+				},
+				{
+					"linkedService": {
+						"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkByProduct"
+				},
+				{
+					"linkedService": {
+						"referenceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkByStore"
+				}
+			],
+			"transformations": [
+				{
+					"name": "joinHeader"
+				},
+				{
+					"name": "joinDetail"
+				},
+				{
+					"name": "aggByStoreAndProduct"
+				},
+				{
+					"name": "AddTransactionMonth"
+				},
+				{
+					"name": "joinProduct"
+				},
+				{
+					"name": "aggByStore"
+				},
+				{
+					"name": "aggByProduct"
+				},
+				{
+					"name": "aggByMonth"
+				}
+			],
+			"script": "source(output(\n\t\tStoreCode as string,\n\t\tName as string,\n\t\tAddress as string,\n\t\tCity as string,\n\t\tState as string,\n\t\tPostalCode as string,\n\t\tCountry as string,\n\t\tArea as string,\n\t\tNumberofEmployees as string,\n\t\tStoreRetailID as string,\n\t\tPhoneNumber as string,\n\t\tWebsite as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> rawStore\nsource(output(\n\t\tTransactionHeaderID as string,\n\t\tStoreRetailID as string,\n\t\tCustomerRetailID as string,\n\t\tTitle as string,\n\t\tDescription as string,\n\t\tDate as timestamp,\n\t\tTransactionType as double,\n\t\tTransactionTotal as double,\n\t\tPaymentMethod as string,\n\t\tCurrency as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> rawHeader\nsource(output(\n\t\tCustomerRetailID as string,\n\t\tTransactionHeaderID as string,\n\t\tProductRetailID as string,\n\t\tQuantity as integer,\n\t\tListPrice as double,\n\t\tDiscountAmount as double,\n\t\tTax as double,\n\t\tShippingCost as double,\n\t\tTotalAmount as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> rawDetail\nsource(output(\n\t\tName as string,\n\t\tCost as string,\n\t\tListPrice as string,\n\t\tRetailProductID as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> rawProduct\nrawStore, rawHeader join(rawStore@StoreRetailID == rawHeader@StoreRetailID,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> joinHeader\njoinHeader, rawDetail join(rawHeader@TransactionHeaderID == rawDetail@TransactionHeaderID,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> joinDetail\nAddTransactionMonth aggregate(groupBy(transactionMonth,\n\t\tStoreCode,\n\t\trawProduct@Name),\n\ttotalAmount = sum(TransactionTotal)) ~> aggByStoreAndProduct\njoinProduct derive(transactionMonth = addDays(lastDayOfMonth(subMonths(Date, 1)), 1)) ~> AddTransactionMonth\njoinDetail, rawProduct join(ProductRetailID == RetailProductID,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> joinProduct\nAddTransactionMonth aggregate(groupBy(transactionMonth,\n\t\tStoreCode),\n\ttotalAmount = sum(TotalAmount)) ~> aggByStore\nAddTransactionMonth aggregate(groupBy(transactionMonth,\n\t\trawProduct@Name),\n\ttotalAmount = sum(TotalAmount)) ~> aggByProduct\nAddTransactionMonth aggregate(groupBy(transactionMonth),\n\ttotalAmount = sum(TotalAmount)) ~> aggByMonth\naggByStoreAndProduct sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delimited',\n\tfileSystem: 'datalake',\n\tfolderPath: 'andyrob/processed/flow_byStoreAndProduct',\n\tcolumnDelimiter: ',',\n\tescapeChar: '\\\\',\n\tqutoChar: '\\\"',\n\tcolumnNamesAsHeader: true,\n\tpartitionFileNames:['flow_byProductAndStore.csv'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sinkByMonthStoreAndProduct\naggByMonth sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delimited',\n\tfileSystem: 'datalake',\n\tfolderPath: 'andyrob/processed/flow_byMonth',\n\tcolumnDelimiter: ',',\n\tescapeChar: '\\\\',\n\tqutoChar: '\\\"',\n\tcolumnNamesAsHeader: true,\n\tpartitionFileNames:['flow_byMonth.csv'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sinkByMonth\naggByProduct sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delimited',\n\tfileSystem: 'datalake',\n\tfolderPath: 'andyrob/processed/flow_byProduct',\n\tcolumnDelimiter: ',',\n\tescapeChar: '\\\\',\n\tqutoChar: '\\\"',\n\tcolumnNamesAsHeader: true,\n\tpartitionFileNames:['flow_byProduct.csv'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sinkByProduct\naggByStore sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delimited',\n\tfileSystem: 'datalake',\n\tfolderPath: 'andyrob/processed/flow_byStore',\n\tcolumnDelimiter: ',',\n\tescapeChar: '\\\\',\n\tqutoChar: '\\\"',\n\tcolumnNamesAsHeader: true,\n\tpartitionFileNames:['flow_byStore.csv'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sinkByStore"
+		}
+	}
+}
