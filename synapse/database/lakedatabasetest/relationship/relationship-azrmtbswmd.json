@@ -1,0 +1,26 @@
+{
+	"name": "relationship-azrmtbswmd",
+	"properties": {
+		"Namespace": {
+			"DatabaseName": "lakedatabasetest"
+		},
+		"Name": "relationship-azrmtbswmd",
+		"EntityType": "RELATIONSHIP",
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"FromTableName": "InvoiceMode",
+		"ToTableName": "Invoice",
+		"ColumnRelationshipInformations": [
+			{
+				"FromColumnName": "InvoiceModeId",
+				"ToColumnName": "InvoiceModeId"
+			}
+		],
+		"RelationshipType": 0,
+		"Properties": {
+			"DerivedModelRelationshipInfo": "{\"baseRelationship\":{\"fromEntity\":\"InvoiceMode.cdm.json/InvoiceMode\",\"toEntity\":\"Invoice.cdm.json/Invoice\",\"joinPairs\":[{\"fromAttribute\":\"InvoiceModeId\",\"toAttribute\":\"InvoiceModeId\"}]}}"
+		}
+	},
+	"type": "RELATIONSHIP"
+}

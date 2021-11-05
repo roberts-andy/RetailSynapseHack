@@ -1,0 +1,128 @@
+{
+	"name": "InvoiceAdjustment",
+	"properties": {
+		"Namespace": {
+			"DatabaseName": "lakedatabasetest"
+		},
+		"Name": "InvoiceAdjustment",
+		"Description": "An adjustment applied to an Invoice.",
+		"EntityType": "TABLE",
+		"TableType": "EXTERNAL",
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"StorageDescriptor": {
+			"Columns": [
+				{
+					"Name": "InvoiceId",
+					"Description": "The unique identifier of an Invoice.",
+					"BaseAttributeReference": {
+						"Entity": "InvoiceAdjustment.cdm.json/InvoiceAdjustment",
+						"Name": "InvoiceId"
+					},
+					"OriginDataTypeName": {
+						"TypeName": "integer",
+						"IsComplexType": false,
+						"IsNullable": false,
+						"Properties": {
+							"HIVE_TYPE_STRING": "integer"
+						}
+					}
+				},
+				{
+					"Name": "AdjustmentId",
+					"Description": "The unique identifier of an Adjustment.",
+					"BaseAttributeReference": {
+						"Entity": "InvoiceAdjustment.cdm.json/InvoiceAdjustment",
+						"Name": "AdjustmentId"
+					},
+					"OriginDataTypeName": {
+						"TypeName": "integer",
+						"IsComplexType": false,
+						"IsNullable": false,
+						"Properties": {
+							"HIVE_TYPE_STRING": "integer"
+						}
+					}
+				},
+				{
+					"Name": "AdjustmentAmount",
+					"Description": "The amount of the adjustment.",
+					"BaseAttributeReference": {
+						"Entity": "InvoiceAdjustment.cdm.json/InvoiceAdjustment",
+						"Name": "AdjustmentAmount"
+					},
+					"OriginDataTypeName": {
+						"TypeName": "decimal",
+						"IsComplexType": false,
+						"IsNullable": true,
+						"Precision": 18,
+						"Scale": 2,
+						"Properties": {
+							"HIVE_TYPE_STRING": "decimal"
+						}
+					}
+				},
+				{
+					"Name": "AdjustmentNote",
+					"Description": "A note, comment or additional information regarding an Adjustment.",
+					"BaseAttributeReference": {
+						"Entity": "InvoiceAdjustment.cdm.json/InvoiceAdjustment",
+						"Name": "AdjustmentNote"
+					},
+					"OriginDataTypeName": {
+						"TypeName": "string",
+						"IsComplexType": false,
+						"IsNullable": true,
+						"Length": 1024,
+						"Properties": {
+							"HIVE_TYPE_STRING": "string"
+						}
+					}
+				}
+			],
+			"Format": {
+				"InputFormat": "org.apache.hadoop.mapred.SequenceFileInputFormat",
+				"OutputFormat": "org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat",
+				"FormatType": "csv",
+				"SerializeLib": "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe",
+				"Properties": {
+					"path": "abfss://datalake@andyrobretailstor.dfs.core.windows.net/lakedatabasetest/InvoiceAdjustment",
+					"delimiter": ",",
+					"multiLine": "false",
+					"firstRowAsHeader": "false",
+					"serialization.format": "1",
+					"escape": "\\",
+					"FormatTypeSetToDatabaseDefault": true,
+					"header": "false"
+				}
+			},
+			"Source": {
+				"Provider": "ADLS",
+				"Location": "abfss://datalake@andyrobretailstor.dfs.core.windows.net/lakedatabasetest/InvoiceAdjustment",
+				"Properties": {
+					"LinkedServiceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+					"LocationSetToDatabaseDefault": true
+				}
+			},
+			"Properties": {
+				"textinputformat.record.delimiter": ",",
+				"compression": "{\"type\":\"None\",\"level\":\"optimal\"}",
+				"derivedModelAttributeInfo": "{\"attributeReferences\":{\"InvoiceId\":{\"entity\":\"InvoiceAdjustment.cdm.json/InvoiceAdjustment\",\"name\":\"InvoiceId\"},\"AdjustmentId\":{\"entity\":\"InvoiceAdjustment.cdm.json/InvoiceAdjustment\",\"name\":\"AdjustmentId\"},\"AdjustmentAmount\":{\"entity\":\"InvoiceAdjustment.cdm.json/InvoiceAdjustment\",\"name\":\"AdjustmentAmount\"},\"AdjustmentNote\":{\"entity\":\"InvoiceAdjustment.cdm.json/InvoiceAdjustment\",\"name\":\"AdjustmentNote\"}}}"
+			},
+			"Compressed": false,
+			"IsStoredAsSubdirectories": false
+		},
+		"Properties": {
+			"DerivedModelEntityInfo": "{\"entityDirectives\":{\"baseEntityReference\":{\"name\":\"InvoiceAdjustment\",\"path\":\"InvoiceAdjustment.cdm.json/InvoiceAdjustment\"},\"description\":\"An adjustment applied to an Invoice.\",\"primaryKey\":[\"InvoiceId\",\"AdjustmentId\"],\"projectionInfo\":{\"attributes\":[{\"type\":\"Existing\",\"name\":\"InvoiceId\",\"attributeReference\":{\"entity\":\"InvoiceAdjustment.cdm.json/InvoiceAdjustment\",\"name\":\"InvoiceId\"},\"dataType\":\"integer\"},{\"type\":\"Existing\",\"name\":\"AdjustmentId\",\"attributeReference\":{\"entity\":\"InvoiceAdjustment.cdm.json/InvoiceAdjustment\",\"name\":\"AdjustmentId\"},\"dataType\":\"integer\"},{\"type\":\"Existing\",\"name\":\"AdjustmentAmount\",\"attributeReference\":{\"entity\":\"InvoiceAdjustment.cdm.json/InvoiceAdjustment\",\"name\":\"AdjustmentAmount\"},\"dataType\":\"decimal\",\"dataTypeLength\":18,\"scale\":2},{\"type\":\"Existing\",\"name\":\"AdjustmentNote\",\"attributeReference\":{\"entity\":\"InvoiceAdjustment.cdm.json/InvoiceAdjustment\",\"name\":\"AdjustmentNote\"},\"dataType\":\"string\",\"dataTypeLength\":1024}]}}}",
+			"Description": "An adjustment applied to an Invoice.",
+			"DisplayFolderInfo": "{\"name\":\"Order\",\"colorCode\":\"#7062A8\"}",
+			"PrimaryKeys": "InvoiceId,AdjustmentId",
+			"spark.sql.sources.provider": "csv"
+		},
+		"Retention": 0,
+		"Temporary": false,
+		"IsRewriteEnabled": false
+	},
+	"type": "TABLE"
+}

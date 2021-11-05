@@ -1,0 +1,23 @@
+{
+	"name": "lakedatabasetest",
+	"properties": {
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"Properties": {
+			"IsSyMSCDMDatabase": true,
+			"DerivedModelDBInfo": "{\"ModelDirectives\":{\"BaseModel\":{\"Name\":\"Retail\",\"Version\":\"0.1.0\"}}}"
+		},
+		"Name": "lakedatabasetest",
+		"EntityType": "DATABASE",
+		"Source": {
+			"Provider": "ADLS",
+			"Location": "abfss://datalake@andyrobretailstor.dfs.core.windows.net/lakedatabasetest",
+			"Properties": {
+				"FormatType": "csv",
+				"LinkedServiceName": "andyrob-retail-syn-WorkspaceDefaultStorage"
+			}
+		}
+	},
+	"type": "DATABASE"
+}

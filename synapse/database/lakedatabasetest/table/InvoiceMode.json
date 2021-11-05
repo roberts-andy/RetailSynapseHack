@@ -1,0 +1,111 @@
+{
+	"name": "InvoiceMode",
+	"properties": {
+		"Namespace": {
+			"DatabaseName": "lakedatabasetest"
+		},
+		"Name": "InvoiceMode",
+		"Description": "The mode by which the Invoice was issued to the Customer.\n\nEx:\n- email\n- EDI\n- mail",
+		"EntityType": "TABLE",
+		"TableType": "EXTERNAL",
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"StorageDescriptor": {
+			"Columns": [
+				{
+					"Name": "InvoiceModeId",
+					"Description": "The unique identifier of the Invoice Mode.",
+					"BaseAttributeReference": {
+						"Entity": "InvoiceMode.cdm.json/InvoiceMode",
+						"Name": "InvoiceModeId"
+					},
+					"OriginDataTypeName": {
+						"TypeName": "integer",
+						"IsComplexType": false,
+						"IsNullable": false,
+						"Properties": {
+							"HIVE_TYPE_STRING": "integer"
+						}
+					}
+				},
+				{
+					"Name": "InvoiceModeName",
+					"Description": "The name of the Invoice Mode.",
+					"BaseAttributeReference": {
+						"Entity": "InvoiceMode.cdm.json/InvoiceMode",
+						"Name": "InvoiceModeName"
+					},
+					"OriginDataTypeName": {
+						"TypeName": "string",
+						"IsComplexType": false,
+						"IsNullable": true,
+						"Length": 128,
+						"Properties": {
+							"HIVE_TYPE_STRING": "string"
+						}
+					}
+				},
+				{
+					"Name": "InvoiceModeDescription",
+					"Description": "The description of the Invoice Mode.",
+					"BaseAttributeReference": {
+						"Entity": "InvoiceMode.cdm.json/InvoiceMode",
+						"Name": "InvoiceModeDescription"
+					},
+					"OriginDataTypeName": {
+						"TypeName": "string",
+						"IsComplexType": false,
+						"IsNullable": true,
+						"Length": 512,
+						"Properties": {
+							"HIVE_TYPE_STRING": "string"
+						}
+					}
+				}
+			],
+			"Format": {
+				"InputFormat": "org.apache.hadoop.mapred.SequenceFileInputFormat",
+				"OutputFormat": "org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat",
+				"FormatType": "csv",
+				"SerializeLib": "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe",
+				"Properties": {
+					"path": "abfss://datalake@andyrobretailstor.dfs.core.windows.net/lakedatabasetest/InvoiceMode",
+					"delimiter": ",",
+					"multiLine": "false",
+					"firstRowAsHeader": "false",
+					"serialization.format": "1",
+					"escape": "\\",
+					"FormatTypeSetToDatabaseDefault": true,
+					"header": "false"
+				}
+			},
+			"Source": {
+				"Provider": "ADLS",
+				"Location": "abfss://datalake@andyrobretailstor.dfs.core.windows.net/lakedatabasetest/InvoiceMode",
+				"Properties": {
+					"LinkedServiceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+					"LocationSetToDatabaseDefault": true
+				}
+			},
+			"Properties": {
+				"textinputformat.record.delimiter": ",",
+				"compression": "{\"type\":\"None\",\"level\":\"optimal\"}",
+				"derivedModelAttributeInfo": "{\"attributeReferences\":{\"InvoiceModeId\":{\"entity\":\"InvoiceMode.cdm.json/InvoiceMode\",\"name\":\"InvoiceModeId\"},\"InvoiceModeName\":{\"entity\":\"InvoiceMode.cdm.json/InvoiceMode\",\"name\":\"InvoiceModeName\"},\"InvoiceModeDescription\":{\"entity\":\"InvoiceMode.cdm.json/InvoiceMode\",\"name\":\"InvoiceModeDescription\"}}}"
+			},
+			"Compressed": false,
+			"IsStoredAsSubdirectories": false
+		},
+		"Properties": {
+			"DerivedModelEntityInfo": "{\"entityDirectives\":{\"baseEntityReference\":{\"name\":\"InvoiceMode\",\"path\":\"InvoiceMode.cdm.json/InvoiceMode\"},\"description\":\"The mode by which the Invoice was issued to the Customer.\\n\\nEx:\\n- email\\n- EDI\\n- mail\",\"primaryKey\":[\"InvoiceModeId\"],\"projectionInfo\":{\"attributes\":[{\"type\":\"Existing\",\"name\":\"InvoiceModeId\",\"attributeReference\":{\"entity\":\"InvoiceMode.cdm.json/InvoiceMode\",\"name\":\"InvoiceModeId\"},\"dataType\":\"integer\"},{\"type\":\"Existing\",\"name\":\"InvoiceModeName\",\"attributeReference\":{\"entity\":\"InvoiceMode.cdm.json/InvoiceMode\",\"name\":\"InvoiceModeName\"},\"dataType\":\"string\",\"dataTypeLength\":128},{\"type\":\"Existing\",\"name\":\"InvoiceModeDescription\",\"attributeReference\":{\"entity\":\"InvoiceMode.cdm.json/InvoiceMode\",\"name\":\"InvoiceModeDescription\"},\"dataType\":\"string\",\"dataTypeLength\":512}]}}}",
+			"Description": "The mode by which the Invoice was issued to the Customer.\n\nEx:\n- email\n- EDI\n- mail",
+			"DisplayFolderInfo": "{\"name\":\"Order\",\"colorCode\":\"#7062A8\"}",
+			"PrimaryKeys": "InvoiceModeId",
+			"spark.sql.sources.provider": "csv"
+		},
+		"Retention": 0,
+		"Temporary": false,
+		"IsRewriteEnabled": false
+	},
+	"type": "TABLE"
+}

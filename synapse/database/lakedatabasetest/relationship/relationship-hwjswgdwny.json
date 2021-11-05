@@ -1,0 +1,26 @@
+{
+	"name": "relationship-hwjswgdwny",
+	"properties": {
+		"Namespace": {
+			"DatabaseName": "lakedatabasetest"
+		},
+		"Name": "relationship-hwjswgdwny",
+		"EntityType": "RELATIONSHIP",
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"FromTableName": "OrderChargeType",
+		"ToTableName": "OrderCharge",
+		"ColumnRelationshipInformations": [
+			{
+				"FromColumnName": "OrderChargeTypeId",
+				"ToColumnName": "OrderChargeTypeId"
+			}
+		],
+		"RelationshipType": 0,
+		"Properties": {
+			"DerivedModelRelationshipInfo": "{\"baseRelationship\":{\"fromEntity\":\"OrderChargeType.cdm.json/OrderChargeType\",\"toEntity\":\"OrderCharge.cdm.json/OrderCharge\",\"joinPairs\":[{\"fromAttribute\":\"OrderChargeTypeId\",\"toAttribute\":\"OrderChargeTypeId\"}]}}"
+		}
+	},
+	"type": "RELATIONSHIP"
+}

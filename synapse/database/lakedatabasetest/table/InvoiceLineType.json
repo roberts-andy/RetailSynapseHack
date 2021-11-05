@@ -1,0 +1,111 @@
+{
+	"name": "InvoiceLineType",
+	"properties": {
+		"Namespace": {
+			"DatabaseName": "lakedatabasetest"
+		},
+		"Name": "InvoiceLineType",
+		"Description": "The function of the associated Invoice Line.\n\nEx:\n- Invoice Line Item \n- Charge\n- Tax\n- Credit\n- Rebate\n- Adjustment",
+		"EntityType": "TABLE",
+		"TableType": "EXTERNAL",
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"StorageDescriptor": {
+			"Columns": [
+				{
+					"Name": "InvoiceLineTypeId",
+					"Description": "The unique identifier of an Invoice Item Type.",
+					"BaseAttributeReference": {
+						"Entity": "InvoiceLineType.cdm.json/InvoiceLineType",
+						"Name": "InvoiceLineTypeId"
+					},
+					"OriginDataTypeName": {
+						"TypeName": "integer",
+						"IsComplexType": false,
+						"IsNullable": false,
+						"Properties": {
+							"HIVE_TYPE_STRING": "integer"
+						}
+					}
+				},
+				{
+					"Name": "InvoiceLineTypeName",
+					"Description": "The name of the Invoice Item Type.",
+					"BaseAttributeReference": {
+						"Entity": "InvoiceLineType.cdm.json/InvoiceLineType",
+						"Name": "InvoiceLineTypeName"
+					},
+					"OriginDataTypeName": {
+						"TypeName": "string",
+						"IsComplexType": false,
+						"IsNullable": true,
+						"Length": 128,
+						"Properties": {
+							"HIVE_TYPE_STRING": "string"
+						}
+					}
+				},
+				{
+					"Name": "InvoiceLineTypeDescription",
+					"Description": "The description of the Invoice Item Type.",
+					"BaseAttributeReference": {
+						"Entity": "InvoiceLineType.cdm.json/InvoiceLineType",
+						"Name": "InvoiceLineTypeDescription"
+					},
+					"OriginDataTypeName": {
+						"TypeName": "string",
+						"IsComplexType": false,
+						"IsNullable": true,
+						"Length": 512,
+						"Properties": {
+							"HIVE_TYPE_STRING": "string"
+						}
+					}
+				}
+			],
+			"Format": {
+				"InputFormat": "org.apache.hadoop.mapred.SequenceFileInputFormat",
+				"OutputFormat": "org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat",
+				"FormatType": "csv",
+				"SerializeLib": "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe",
+				"Properties": {
+					"path": "abfss://datalake@andyrobretailstor.dfs.core.windows.net/lakedatabasetest/InvoiceLineType",
+					"delimiter": ",",
+					"multiLine": "false",
+					"firstRowAsHeader": "false",
+					"serialization.format": "1",
+					"escape": "\\",
+					"FormatTypeSetToDatabaseDefault": true,
+					"header": "false"
+				}
+			},
+			"Source": {
+				"Provider": "ADLS",
+				"Location": "abfss://datalake@andyrobretailstor.dfs.core.windows.net/lakedatabasetest/InvoiceLineType",
+				"Properties": {
+					"LinkedServiceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+					"LocationSetToDatabaseDefault": true
+				}
+			},
+			"Properties": {
+				"textinputformat.record.delimiter": ",",
+				"compression": "{\"type\":\"None\",\"level\":\"optimal\"}",
+				"derivedModelAttributeInfo": "{\"attributeReferences\":{\"InvoiceLineTypeId\":{\"entity\":\"InvoiceLineType.cdm.json/InvoiceLineType\",\"name\":\"InvoiceLineTypeId\"},\"InvoiceLineTypeName\":{\"entity\":\"InvoiceLineType.cdm.json/InvoiceLineType\",\"name\":\"InvoiceLineTypeName\"},\"InvoiceLineTypeDescription\":{\"entity\":\"InvoiceLineType.cdm.json/InvoiceLineType\",\"name\":\"InvoiceLineTypeDescription\"}}}"
+			},
+			"Compressed": false,
+			"IsStoredAsSubdirectories": false
+		},
+		"Properties": {
+			"DerivedModelEntityInfo": "{\"entityDirectives\":{\"baseEntityReference\":{\"name\":\"InvoiceLineType\",\"path\":\"InvoiceLineType.cdm.json/InvoiceLineType\"},\"description\":\"The function of the associated Invoice Line.\\n\\nEx:\\n- Invoice Line Item \\n- Charge\\n- Tax\\n- Credit\\n- Rebate\\n- Adjustment\",\"primaryKey\":[\"InvoiceLineTypeId\"],\"projectionInfo\":{\"attributes\":[{\"type\":\"Existing\",\"name\":\"InvoiceLineTypeId\",\"attributeReference\":{\"entity\":\"InvoiceLineType.cdm.json/InvoiceLineType\",\"name\":\"InvoiceLineTypeId\"},\"dataType\":\"integer\"},{\"type\":\"Existing\",\"name\":\"InvoiceLineTypeName\",\"attributeReference\":{\"entity\":\"InvoiceLineType.cdm.json/InvoiceLineType\",\"name\":\"InvoiceLineTypeName\"},\"dataType\":\"string\",\"dataTypeLength\":128},{\"type\":\"Existing\",\"name\":\"InvoiceLineTypeDescription\",\"attributeReference\":{\"entity\":\"InvoiceLineType.cdm.json/InvoiceLineType\",\"name\":\"InvoiceLineTypeDescription\"},\"dataType\":\"string\",\"dataTypeLength\":512}]}}}",
+			"Description": "The function of the associated Invoice Line.\n\nEx:\n- Invoice Line Item \n- Charge\n- Tax\n- Credit\n- Rebate\n- Adjustment",
+			"DisplayFolderInfo": "{\"name\":\"Order\",\"colorCode\":\"#7062A8\"}",
+			"PrimaryKeys": "InvoiceLineTypeId",
+			"spark.sql.sources.provider": "csv"
+		},
+		"Retention": 0,
+		"Temporary": false,
+		"IsRewriteEnabled": false
+	},
+	"type": "TABLE"
+}

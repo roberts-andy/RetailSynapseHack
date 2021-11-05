@@ -1,0 +1,127 @@
+{
+	"name": "OrderChargeType",
+	"properties": {
+		"Namespace": {
+			"DatabaseName": "lakedatabasetest"
+		},
+		"Name": "OrderChargeType",
+		"Description": "A charge type that is applied against an order or order line item.\n\nEx:\n- Handling charge\n- Service Charge\n- Large-item charge\n- Third-party billing charge\n- VAT tax\n- Federal Tax\n- State Tax\n- Freight\n- Customs\n- Inspection charge",
+		"EntityType": "TABLE",
+		"TableType": "EXTERNAL",
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"StorageDescriptor": {
+			"Columns": [
+				{
+					"Name": "OrderChargeTypeId",
+					"Description": "The unique identifier of an Order Charge Type.",
+					"BaseAttributeReference": {
+						"Entity": "OrderChargeType.cdm.json/OrderChargeType",
+						"Name": "OrderChargeTypeId"
+					},
+					"OriginDataTypeName": {
+						"TypeName": "integer",
+						"IsComplexType": false,
+						"IsNullable": false,
+						"Properties": {
+							"HIVE_TYPE_STRING": "integer"
+						}
+					}
+				},
+				{
+					"Name": "OrderChargeTypeName",
+					"Description": "The name of an Order Charge Type.",
+					"BaseAttributeReference": {
+						"Entity": "OrderChargeType.cdm.json/OrderChargeType",
+						"Name": "OrderChargeTypeName"
+					},
+					"OriginDataTypeName": {
+						"TypeName": "string",
+						"IsComplexType": false,
+						"IsNullable": true,
+						"Length": 128,
+						"Properties": {
+							"HIVE_TYPE_STRING": "string"
+						}
+					}
+				},
+				{
+					"Name": "OrderChargeTypeDescription",
+					"Description": "The description of an Order Charge Type.",
+					"BaseAttributeReference": {
+						"Entity": "OrderChargeType.cdm.json/OrderChargeType",
+						"Name": "OrderChargeTypeDescription"
+					},
+					"OriginDataTypeName": {
+						"TypeName": "string",
+						"IsComplexType": false,
+						"IsNullable": true,
+						"Length": 512,
+						"Properties": {
+							"HIVE_TYPE_STRING": "string"
+						}
+					}
+				},
+				{
+					"Name": "OrderChargeCategoryId",
+					"Description": "The unique identifier of an Order Charge Category.",
+					"BaseAttributeReference": {
+						"Entity": "OrderChargeType.cdm.json/OrderChargeType",
+						"Name": "OrderChargeCategoryId"
+					},
+					"OriginDataTypeName": {
+						"TypeName": "integer",
+						"IsComplexType": false,
+						"IsNullable": true,
+						"Properties": {
+							"HIVE_TYPE_STRING": "integer"
+						}
+					}
+				}
+			],
+			"Format": {
+				"InputFormat": "org.apache.hadoop.mapred.SequenceFileInputFormat",
+				"OutputFormat": "org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat",
+				"FormatType": "csv",
+				"SerializeLib": "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe",
+				"Properties": {
+					"path": "abfss://datalake@andyrobretailstor.dfs.core.windows.net/lakedatabasetest/OrderChargeType",
+					"delimiter": ",",
+					"multiLine": "false",
+					"firstRowAsHeader": "false",
+					"serialization.format": "1",
+					"escape": "\\",
+					"FormatTypeSetToDatabaseDefault": true,
+					"header": "false"
+				}
+			},
+			"Source": {
+				"Provider": "ADLS",
+				"Location": "abfss://datalake@andyrobretailstor.dfs.core.windows.net/lakedatabasetest/OrderChargeType",
+				"Properties": {
+					"LinkedServiceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+					"LocationSetToDatabaseDefault": true
+				}
+			},
+			"Properties": {
+				"textinputformat.record.delimiter": ",",
+				"compression": "{\"type\":\"None\",\"level\":\"optimal\"}",
+				"derivedModelAttributeInfo": "{\"attributeReferences\":{\"OrderChargeTypeId\":{\"entity\":\"OrderChargeType.cdm.json/OrderChargeType\",\"name\":\"OrderChargeTypeId\"},\"OrderChargeTypeName\":{\"entity\":\"OrderChargeType.cdm.json/OrderChargeType\",\"name\":\"OrderChargeTypeName\"},\"OrderChargeTypeDescription\":{\"entity\":\"OrderChargeType.cdm.json/OrderChargeType\",\"name\":\"OrderChargeTypeDescription\"},\"OrderChargeCategoryId\":{\"entity\":\"OrderChargeType.cdm.json/OrderChargeType\",\"name\":\"OrderChargeCategoryId\"}}}"
+			},
+			"Compressed": false,
+			"IsStoredAsSubdirectories": false
+		},
+		"Properties": {
+			"DerivedModelEntityInfo": "{\"entityDirectives\":{\"baseEntityReference\":{\"name\":\"OrderChargeType\",\"path\":\"OrderChargeType.cdm.json/OrderChargeType\"},\"description\":\"A charge type that is applied against an order or order line item.\\n\\nEx:\\n- Handling charge\\n- Service Charge\\n- Large-item charge\\n- Third-party billing charge\\n- VAT tax\\n- Federal Tax\\n- State Tax\\n- Freight\\n- Customs\\n- Inspection charge\",\"primaryKey\":[\"OrderChargeTypeId\"],\"projectionInfo\":{\"attributes\":[{\"type\":\"Existing\",\"name\":\"OrderChargeTypeId\",\"attributeReference\":{\"entity\":\"OrderChargeType.cdm.json/OrderChargeType\",\"name\":\"OrderChargeTypeId\"},\"dataType\":\"integer\"},{\"type\":\"Existing\",\"name\":\"OrderChargeTypeName\",\"attributeReference\":{\"entity\":\"OrderChargeType.cdm.json/OrderChargeType\",\"name\":\"OrderChargeTypeName\"},\"dataType\":\"string\",\"dataTypeLength\":128},{\"type\":\"Existing\",\"name\":\"OrderChargeTypeDescription\",\"attributeReference\":{\"entity\":\"OrderChargeType.cdm.json/OrderChargeType\",\"name\":\"OrderChargeTypeDescription\"},\"dataType\":\"string\",\"dataTypeLength\":512},{\"type\":\"Existing\",\"name\":\"OrderChargeCategoryId\",\"attributeReference\":{\"entity\":\"OrderChargeType.cdm.json/OrderChargeType\",\"name\":\"OrderChargeCategoryId\"},\"dataType\":\"integer\"}]}}}",
+			"Description": "A charge type that is applied against an order or order line item.\n\nEx:\n- Handling charge\n- Service Charge\n- Large-item charge\n- Third-party billing charge\n- VAT tax\n- Federal Tax\n- State Tax\n- Freight\n- Customs\n- Inspection charge",
+			"DisplayFolderInfo": "{\"name\":\"Order\",\"colorCode\":\"#7062A8\"}",
+			"PrimaryKeys": "OrderChargeTypeId",
+			"spark.sql.sources.provider": "csv"
+		},
+		"Retention": 0,
+		"Temporary": false,
+		"IsRewriteEnabled": false
+	},
+	"type": "TABLE"
+}

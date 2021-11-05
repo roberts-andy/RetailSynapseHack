@@ -1,0 +1,26 @@
+{
+	"name": "relationship-trhvlyxfyj",
+	"properties": {
+		"Namespace": {
+			"DatabaseName": "lakedatabasetest"
+		},
+		"Name": "relationship-trhvlyxfyj",
+		"EntityType": "RELATIONSHIP",
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"FromTableName": "InvoiceLineType",
+		"ToTableName": "InvoiceLine",
+		"ColumnRelationshipInformations": [
+			{
+				"FromColumnName": "InvoiceLineTypeId",
+				"ToColumnName": "InvoiceLineTypeId"
+			}
+		],
+		"RelationshipType": 0,
+		"Properties": {
+			"DerivedModelRelationshipInfo": "{\"baseRelationship\":{\"fromEntity\":\"InvoiceLineType.cdm.json/InvoiceLineType\",\"toEntity\":\"InvoiceLine.cdm.json/InvoiceLine\",\"joinPairs\":[{\"fromAttribute\":\"InvoiceLineTypeId\",\"toAttribute\":\"InvoiceLineTypeId\"}]}}"
+		}
+	},
+	"type": "RELATIONSHIP"
+}

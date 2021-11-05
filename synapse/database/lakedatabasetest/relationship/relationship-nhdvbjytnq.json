@@ -1,0 +1,30 @@
+{
+	"name": "relationship-nhdvbjytnq",
+	"properties": {
+		"Namespace": {
+			"DatabaseName": "lakedatabasetest"
+		},
+		"Name": "relationship-nhdvbjytnq",
+		"EntityType": "RELATIONSHIP",
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"FromTableName": "InvoiceLine",
+		"ToTableName": "InvoiceLineAdjustment",
+		"ColumnRelationshipInformations": [
+			{
+				"FromColumnName": "InvoiceId",
+				"ToColumnName": "InvoiceId"
+			},
+			{
+				"FromColumnName": "InvoiceLineNumber",
+				"ToColumnName": "InvoiceLineNumber"
+			}
+		],
+		"RelationshipType": 0,
+		"Properties": {
+			"DerivedModelRelationshipInfo": "{\"baseRelationship\":{\"fromEntity\":\"InvoiceLine.cdm.json/InvoiceLine\",\"toEntity\":\"InvoiceLineAdjustment.cdm.json/InvoiceLineAdjustment\",\"joinPairs\":[{\"fromAttribute\":\"InvoiceId\",\"toAttribute\":\"InvoiceId\"},{\"fromAttribute\":\"InvoiceLineNumber\",\"toAttribute\":\"InvoiceLineNumber\"}]}}"
+		}
+	},
+	"type": "RELATIONSHIP"
+}

@@ -1,0 +1,26 @@
+{
+	"name": "relationship-sgovyipcqj",
+	"properties": {
+		"Namespace": {
+			"DatabaseName": "lakedatabasetest"
+		},
+		"Name": "relationship-sgovyipcqj",
+		"EntityType": "RELATIONSHIP",
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"FromTableName": "Invoice",
+		"ToTableName": "InvoiceAdjustment",
+		"ColumnRelationshipInformations": [
+			{
+				"FromColumnName": "InvoiceId",
+				"ToColumnName": "InvoiceId"
+			}
+		],
+		"RelationshipType": 0,
+		"Properties": {
+			"DerivedModelRelationshipInfo": "{\"baseRelationship\":{\"fromEntity\":\"Invoice.cdm.json/Invoice\",\"toEntity\":\"InvoiceAdjustment.cdm.json/InvoiceAdjustment\",\"joinPairs\":[{\"fromAttribute\":\"InvoiceId\",\"toAttribute\":\"InvoiceId\"}]}}"
+		}
+	},
+	"type": "RELATIONSHIP"
+}

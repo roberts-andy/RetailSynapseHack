@@ -1,0 +1,111 @@
+{
+	"name": "OrderActivityType",
+	"properties": {
+		"Namespace": {
+			"DatabaseName": "lakedatabasetest"
+		},
+		"Name": "OrderActivityType",
+		"Description": "A specific type of activity that is related to the order fulfillment process.\n\nEx:\n- record order\n- book order\n- bill order\n- take order\n- deliver order\n- cancel order\n- close order\n- pick order line items\n- receiving and inspection\n- responsible for order (management)",
+		"EntityType": "TABLE",
+		"TableType": "EXTERNAL",
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"StorageDescriptor": {
+			"Columns": [
+				{
+					"Name": "OrderActivityTypeId",
+					"Description": "The unique identifier of an Order Activity Type.",
+					"BaseAttributeReference": {
+						"Entity": "OrderActivityType.cdm.json/OrderActivityType",
+						"Name": "OrderActivityTypeId"
+					},
+					"OriginDataTypeName": {
+						"TypeName": "integer",
+						"IsComplexType": false,
+						"IsNullable": false,
+						"Properties": {
+							"HIVE_TYPE_STRING": "integer"
+						}
+					}
+				},
+				{
+					"Name": "OrderActivityTypeName",
+					"Description": "The name of an Order Activity Type.",
+					"BaseAttributeReference": {
+						"Entity": "OrderActivityType.cdm.json/OrderActivityType",
+						"Name": "OrderActivityTypeName"
+					},
+					"OriginDataTypeName": {
+						"TypeName": "string",
+						"IsComplexType": false,
+						"IsNullable": true,
+						"Length": 128,
+						"Properties": {
+							"HIVE_TYPE_STRING": "string"
+						}
+					}
+				},
+				{
+					"Name": "OrderActivityTypeDescription",
+					"Description": "The description of an Order Activity Type.",
+					"BaseAttributeReference": {
+						"Entity": "OrderActivityType.cdm.json/OrderActivityType",
+						"Name": "OrderActivityTypeDescription"
+					},
+					"OriginDataTypeName": {
+						"TypeName": "string",
+						"IsComplexType": false,
+						"IsNullable": true,
+						"Length": 512,
+						"Properties": {
+							"HIVE_TYPE_STRING": "string"
+						}
+					}
+				}
+			],
+			"Format": {
+				"InputFormat": "org.apache.hadoop.mapred.SequenceFileInputFormat",
+				"OutputFormat": "org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat",
+				"FormatType": "csv",
+				"SerializeLib": "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe",
+				"Properties": {
+					"path": "abfss://datalake@andyrobretailstor.dfs.core.windows.net/lakedatabasetest/OrderActivityType",
+					"delimiter": ",",
+					"multiLine": "false",
+					"firstRowAsHeader": "false",
+					"serialization.format": "1",
+					"escape": "\\",
+					"FormatTypeSetToDatabaseDefault": true,
+					"header": "false"
+				}
+			},
+			"Source": {
+				"Provider": "ADLS",
+				"Location": "abfss://datalake@andyrobretailstor.dfs.core.windows.net/lakedatabasetest/OrderActivityType",
+				"Properties": {
+					"LinkedServiceName": "andyrob-retail-syn-WorkspaceDefaultStorage",
+					"LocationSetToDatabaseDefault": true
+				}
+			},
+			"Properties": {
+				"textinputformat.record.delimiter": ",",
+				"compression": "{\"type\":\"None\",\"level\":\"optimal\"}",
+				"derivedModelAttributeInfo": "{\"attributeReferences\":{\"OrderActivityTypeId\":{\"entity\":\"OrderActivityType.cdm.json/OrderActivityType\",\"name\":\"OrderActivityTypeId\"},\"OrderActivityTypeName\":{\"entity\":\"OrderActivityType.cdm.json/OrderActivityType\",\"name\":\"OrderActivityTypeName\"},\"OrderActivityTypeDescription\":{\"entity\":\"OrderActivityType.cdm.json/OrderActivityType\",\"name\":\"OrderActivityTypeDescription\"}}}"
+			},
+			"Compressed": false,
+			"IsStoredAsSubdirectories": false
+		},
+		"Properties": {
+			"DerivedModelEntityInfo": "{\"entityDirectives\":{\"baseEntityReference\":{\"name\":\"OrderActivityType\",\"path\":\"OrderActivityType.cdm.json/OrderActivityType\"},\"description\":\"A specific type of activity that is related to the order fulfillment process.\\n\\nEx:\\n- record order\\n- book order\\n- bill order\\n- take order\\n- deliver order\\n- cancel order\\n- close order\\n- pick order line items\\n- receiving and inspection\\n- responsible for order (management)\",\"primaryKey\":[\"OrderActivityTypeId\"],\"projectionInfo\":{\"attributes\":[{\"type\":\"Existing\",\"name\":\"OrderActivityTypeId\",\"attributeReference\":{\"entity\":\"OrderActivityType.cdm.json/OrderActivityType\",\"name\":\"OrderActivityTypeId\"},\"dataType\":\"integer\"},{\"type\":\"Existing\",\"name\":\"OrderActivityTypeName\",\"attributeReference\":{\"entity\":\"OrderActivityType.cdm.json/OrderActivityType\",\"name\":\"OrderActivityTypeName\"},\"dataType\":\"string\",\"dataTypeLength\":128},{\"type\":\"Existing\",\"name\":\"OrderActivityTypeDescription\",\"attributeReference\":{\"entity\":\"OrderActivityType.cdm.json/OrderActivityType\",\"name\":\"OrderActivityTypeDescription\"},\"dataType\":\"string\",\"dataTypeLength\":512}]}}}",
+			"Description": "A specific type of activity that is related to the order fulfillment process.\n\nEx:\n- record order\n- book order\n- bill order\n- take order\n- deliver order\n- cancel order\n- close order\n- pick order line items\n- receiving and inspection\n- responsible for order (management)",
+			"DisplayFolderInfo": "{\"name\":\"Order\",\"colorCode\":\"#7062A8\"}",
+			"PrimaryKeys": "OrderActivityTypeId",
+			"spark.sql.sources.provider": "csv"
+		},
+		"Retention": 0,
+		"Temporary": false,
+		"IsRewriteEnabled": false
+	},
+	"type": "TABLE"
+}
